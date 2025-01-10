@@ -1,6 +1,6 @@
 ---
 title: 'STAT 443: Lab 1'
-author: 'Student Name (Student #)'
+author: 'Aronn Grant Laurel (21232475)'
 date: "xx January, 2022"
 output:
   pdf_document: default
