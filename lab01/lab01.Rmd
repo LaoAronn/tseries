@@ -51,8 +51,15 @@ is.ts(x)
 
 ```{r, echo=TRUE}
 # this is where your R code goes
+plot(x,
+     main = "Total Number of Passengers Over Time",
+     xlab = "Year",
+     ylab = "Number of Passengers")
+
 ```
 
+If we plot time series object, we cna see that plot() will use a line graph and it
+extends its y-axis range more. Now, we can easily identify if there's a clear trend, if there's seasonal variation.
 
 ### Question 2
 
