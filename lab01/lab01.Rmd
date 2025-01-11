@@ -102,8 +102,11 @@ I would expect 31.8% or 159 out of the 500 obsesrvation to be outside of the
 
 ```{r, echo=TRUE}
 # this is where your R code goes
+acf(x2_ts, main="Sample Autocorrelation Function for Time Series")
 ```
-
+The lag 0 autocorrelation will be 1, with majority of all the other lag values 
+close to value 0 and staying between the confidence boundary line. We can say
+lag 0, 5, and 8 is outside the boundary line, therefore statistically significant.
 
 
 ### More information on R Markdown
