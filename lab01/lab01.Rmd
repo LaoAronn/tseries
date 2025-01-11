@@ -37,6 +37,13 @@ overlapping data points.
 
 ```{r, echo=TRUE}
 # this is where your R code goes
+is.ts(passengers)
+
+x <- ts(passengers$TOTAL, 
+        start = c(2002, 10),
+        frequency = 12)    
+
+is.ts(x)
 ```
 
 
