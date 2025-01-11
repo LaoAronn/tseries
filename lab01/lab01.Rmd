@@ -67,6 +67,12 @@ extends its y-axis range more. Now, we can easily identify if there's a clear tr
 
 ```{r, echo=TRUE}
 # this is where your R code goes
+set.seed(100)
+
+x2 <- rnorm(500)
+
+x2_ts <- ts(x2)
+is.ts(x2_ts)
 ```
 
 
@@ -74,8 +80,23 @@ extends its y-axis range more. Now, we can easily identify if there's a clear tr
 
 ```{r, echo=TRUE}
 # this is where your R code goes
+plot(x2_ts, 
+     main = "Time Series from Standard Normal Distribution",
+     ylab = "Values",
+     xlab = "Time")
+
+# Add lines + / - 1
+abline(h = 1, col = "red")
+abline(h = -1, col = "red")
+
+# Expected outside + / - 1 range
+2* (1 - pnorm(1)) * 500 
+sum(abs(x2_ts) > 1)
+159/500 # Or 2* (1 - pnorm(1))
 ```
 
+I would expect 31.8% or 159 out of the 500 obsesrvation to be outside of the
++ / - 1 range
 
 (c)
 
