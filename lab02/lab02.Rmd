@@ -1,7 +1,7 @@
 ---
-title: 'STAT 443: Lab 1'
+title: 'STAT 443: Lab 2'
 author: 'Aronn Grant Laurel (21232475)'
-date: "xx January, 2022"
+date: "17 January, 2025"
 output:
   pdf_document: default
   html_document: default
@@ -19,7 +19,19 @@ library(tseries)
 (a) 
 
 ```{r, echo=TRUE}
-# this is where your R code goes
+# Read data
+dataTemp <- read.csv("dataTempPG.csv")
+
+# Extract data
+dataSummer <- dataTemp$Summer
+dataSummer_ts <- ts(dataSummer)
+
+# Plotting data
+plot(dataSummer_ts,
+     main = "Mean Summer Temperature at Prince George, BC",
+     xlab = "Time",
+     ylab = "Mean Summer Temperature")
+
 ```
 
 
