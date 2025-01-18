@@ -23,13 +23,12 @@ library(tseries)
 dataTemp <- read.csv("dataTempPG.csv")
 
 # Extract data
-dataSummer <- dataTemp$Summer
-dataSummer_ts <- ts(dataSummer)
+dataSummer_ts <- ts(dataTemp$Summer, start = 1919)
 
 # Plotting data
 plot(dataSummer_ts,
      main = "Mean Summer Temperature at Prince George, BC",
-     xlab = "Time",
+     xlab = "Year",
      ylab = "Mean Summer Temperature")
 
 ```
@@ -39,13 +38,37 @@ plot(dataSummer_ts,
 
 ```{r, echo=TRUE}
 # this is where your R code goes
+acf(dataSummer_ts)
 ```
-
+All lag features except for the last one are above the boundary line, 
+meaning that we will be rejecting the null hypothesis of no 
+autocorrelation at those lag values except the last one.
 
 (c)
 
 ```{r, echo=TRUE}
+library(zoo)
 # this is where your R code goes
+
+# Extraction (window)
+summerExtract <- window(dataSummer_ts, start = 1968, end = 2008)
+# Plot extraction
+plot(summerExtract, 
+     main="Summer Temperature Data (1968-2008)",
+     ylab="Temperature",
+     xlab="Year",
+     type="l")
+
+
+# rollmean
+summer_rm <- rollmean(summerExtract, k = 5)
+
+lines(summer_rm, col="red", lwd=2)
+
+legend("topleft", 
+       legend=c("Original Data", "5-Year Moving Average"),
+       col=c("black", "red"),
+       lwd=c(1, 2))
 ```
 
 
@@ -55,50 +78,29 @@ plot(dataSummer_ts,
 
 ```{r, echo=TRUE}
 # this is where your R code goes
-```
+dataLake <- read.csv("LakeLevels.csv")
 
+lake_ts <- ts(dataLake$LakeLevel, start = c(2007, 1), frequency = 365)
+lakeExtract <- window(lake_ts, end = 2011)
+
+acf(lake_ts)
+```
+For all the lags, we see that there are very high autocorrelation throughout.
 
 (b)
 
 ```{r, echo=TRUE}
-# this is where your R code goes
+# Decomposition
+lake_decomp <- decompose(lake_ts, type="additive")
+plot(lake_decomp)
 ```
 
 
 (c)
 
 ```{r, echo=TRUE}
-# this is where your R code goes
-```
+# Periodic Decomposition
+lake_stl <- stl(lake_ts, s.window="periodic")
+plot(lake_stl, main="Decomposition of Lake Level Data")
 
-
-
-### More information on R Markdown
-
-This is an R Markdown document, which can be used as a template for STAT 443 labs and assignments. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r}
-summary(cars)
-```
-
-Using the function *kable*, it produces a nicer table
-```{r}
-kable(summary(cars))
-```
-
-### Including Plots
-
-You can also embed plots, for example:
-
-```{r, echo=TRUE}
-plot(pressure)
-```
-
-Note that specifying `echo = FALSE` parameter would prevent printing of the R code that generated the plot. This is something you may want to do for larger reports that would not require display of the R code.
-
-You can also modify the size and alignment of the figure.
-```{r, echo=TRUE, fig.cap="title",fig.align='center',fig.height=6,fig.width=4}
-plot(pressure)
 ```
