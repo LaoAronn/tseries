@@ -26,9 +26,14 @@ library(ggplot2)
 employee <- read_csv("employee_wages_total_industry.csv")
 # head(employee)
 
-employee_ts <- ts(employee$employee_wages, start = c(1997, 1), frequency = 12)
+employee_ts <- ts(employee$employee_wages, 
+                  start = c(1997, 1),
+                  frequency = 12)
 
-plot(employee_ts, main = "Employee Wages Time Series (Jan 1997 - Nov 2024)", ylab = "Wages (CAD)", xlab = "Year")
+plot(employee_ts, 
+     main = "Employee Wages Time Series (Jan 1997 - Nov 2024)", 
+     ylab = "Wages (CAD)",
+     xlab = "Year")
 ```
 
 Trend: We can see an steady increase and positive trend in average Wage (CAD) over the years
