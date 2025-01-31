@@ -39,8 +39,7 @@ Additive model  would be more appropriate for our data because
 we also can observe a fixed variation between seasons.
 
 Stationary: Since we observe an increasing average wage over 
-time and we
-see a slight variation in the series over time as well which 
+time and we see a slight variation in the series over time as well which 
 could indicate that it is not stationary.
 
 (b)
@@ -146,22 +145,125 @@ to account for uncertainty when predicting new data.
 ### Question 2
 
 (a) 
-
 ```{r, echo=TRUE}
 # this is where your R code goes
+MSFT <- read_csv("MSFT_closing_price.csv")
+MSFT_zoo <- zoo(MSFT$Closing_Price, as.Date(MSFT$Date))
+
+plot(MSFT_zoo,
+     main = "Microsoft Daily Closing Prices (2010 - 2019)",
+     xlab = "Year",
+     ylab = "Closing Price (USD)")
+
 ```
+
+Trend: We see an increasing and positive trend from the above graph, with
+a sharper increase starting 2016.
+
+Seasonality: As there are many fluctuations in the season, it is difficult
+to determine if there is seasonality from the plot above.
 
 
 (b)
 
 ```{r, echo=TRUE}
-# this is where your R code goes
-```
 
+# daily log-returns
+log_returns <- diff(log(MSFT_zoo))
+
+plot( log_returns,
+      main = "Daily Log-Returns of Microsoft (2010 - 2019)",
+      xlab = "Year",
+      ylab = "Log-Return")
+
+acf(coredata(log_returns), # Extract core data (no date)
+    main = "Sample ACF of Daily Log-Returns",
+    lag.max = 30)
+ 
+```
+Aside from Lag 0, we can see that all the lags from 1-30 are close to 0 (within 
+the significant bound), thus suggesting that our daily log returns may be a 
+white noise process.
 
 (c)
 
 ```{r, echo=TRUE}
 # this is where your R code goes
+abs_log_returns <- abs(log_returns)
+
+acf(coredata(abs_log_returns),
+   main = "ACF of Absolute Log Returns")
 ```
 
+In contrast to question 2b), we end up seeing the ACF values for our
+daily log returns at absolute values with more significant values. The ACF values that goes beyond the boundary line suggests that there exists serial dependence in the series. Hence, we cannot consider this as a white noise process.
+
+(d)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+monthly_returns <- aggregate(log_returns, 
+                             as.yearmon,
+                             FUN = mean)
+
+plot(monthly_returns,
+     main = "Monthly Average Log Returns",
+     xlab = "Year",
+     ylab = "Log Return")
+
+```
+
+By aggregating our value, we smoothened the fluctuations which would exhibit 
+a weaken overall serial dependence compared to the daily return series.
+
+
+(e)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+qqnorm(log_returns, main = "qqplot for Daily Log Returns")
+qqline(log_returns)
+
+qqnorm(monthly_returns, main = "qqplot Monthly Log Returns") 
+qqline(monthly_returns)
+```
+The qqplot for daily log returns exhibits a left heavy-tailed behavior while
+our monthly mean returns is closer to a straight line, suggesting that it can be
+approximated well with a normal distribution in comparison to our qqplot for
+the daily log returns.
+
+### Question 3
+
+a)  Compute the mean and variance of r1 and r2 values from your simulation study
+```{r, echo=TRUE}
+set.seed(123) 
+
+# Part i)
+n <- 1000
+m <- 10000
+z <- matrix(rnorm(n * m), nrow = n, ncol = m)
+
+# Part ii) 
+r1 <- numeric(m)
+r2 <- numeric(m)
+
+
+for (i in 1:m) {
+  r1[i] <- acf(z[, i], lag.max = 1, plot = FALSE)$acf[2]
+  r2[i] <- acf(z[, i], lag.max = 2, plot = FALSE)$acf[3] 
+}
+
+```
+
+b)  In two separate figures, plot the two histograms for the sample of r1 and r2 values from the simulation study (function hist()), add the smoothed version of the histogram (function density()) and the theoretical asymptotic normal density (function dnorm()). Make sure your plots are well-presented, including a suitable title, axes labels, curves of different type or colour, and a legend.
+```{r, echo=TRUE}
+# this is where your R code goes
+
+```
+
+
+c) Comment whether there is an agreement between the empirical estimates of the bias, variance and sampling density of the estimator of the autocorrelation at lag h and their theoretical approximation.
+```{r, echo=TRUE}
+# this is where your R code goes
+
+```
