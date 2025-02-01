@@ -1,0 +1,106 @@
+---
+title: 'STAT 443: Lab 2'
+author: 'Aronn Grant Laurel (21232475)'
+date: "17 January, 2025"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#if you do not have the package, type install.packages("name_of_the_package")
+library(knitr)
+library(tseries)
+```
+
+### Question 1
+
+(a) 
+
+```{r, echo=TRUE}
+# Read data
+dataTemp <- read.csv("dataTempPG.csv")
+
+# Extract data
+dataSummer_ts <- ts(dataTemp$Summer, start = 1919)
+
+# Plotting data
+plot(dataSummer_ts,
+     main = "Mean Summer Temperature at Prince George, BC",
+     xlab = "Year",
+     ylab = "Mean Summer Temperature")
+
+```
+
+
+(b)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+acf(dataSummer_ts)
+```
+All lag features except for the last one are above the boundary line, 
+meaning that we will be rejecting the null hypothesis of no 
+autocorrelation at those lag values except the last one.
+
+(c)
+
+```{r, echo=TRUE}
+library(zoo)
+# this is where your R code goes
+
+# Extraction (window)
+summerExtract <- window(dataSummer_ts, start = 1968, end = 2008)
+# Plot extraction
+plot(summerExtract, 
+     main="Summer Temperature Data (1968-2008)",
+     ylab="Temperature",
+     xlab="Year",
+     type="l")
+
+
+# rollmean
+summer_rm <- rollmean(summerExtract, k = 5)
+
+lines(summer_rm, col="red", lwd=2)
+
+legend("topleft", 
+       legend=c("Original Data", "5-Year Moving Average"),
+       col=c("black", "red"),
+       lwd=c(1, 2))
+```
+
+
+### Question 2
+
+(a) 
+
+```{r, echo=TRUE}
+# this is where your R code goes
+dataLake <- read.csv("LakeLevels.csv")
+
+lake_ts <- ts(dataLake$LakeLevel, start = c(2007, 1), frequency = 365)
+lakeExtract <- window(lake_ts, end = 2011)
+
+acf(lake_ts)
+```
+For all the lags, we see that there are very high autocorrelation throughout.
+
+(b)
+
+```{r, echo=TRUE}
+# Decomposition
+lake_decomp <- decompose(lake_ts, type="additive")
+plot(lake_decomp)
+```
+
+
+(c)
+
+```{r, echo=TRUE}
+# Periodic Decomposition
+lake_stl <- stl(lake_ts, s.window="periodic")
+plot(lake_stl, main="Decomposition of Lake Level Data")
+
+```
