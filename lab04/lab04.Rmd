@@ -54,7 +54,7 @@ diff_ts <- diff(ts_data, lag=1, differences=1)
 plot(diff_ts,
      main="Differenced Time Series", 
      xlab="Time",
-     ylab="Difference")
+     ylab="Differenced Value")
 
 acf(diff_ts, main="ACF of Differenced Time Series")
 
@@ -65,22 +65,35 @@ In our difference time plot, we observe values fluctuating around zero at time 0
 increased fluctuation beyond 60. Although we removed the strong downward trend,
 there might still be some non-stationarity in terms of variance.
 
+For our ACF plot, we see an osciliating pattern with significant positive spikes
+at several lags (lags 5, 10, 15, and 20) and significant negative spikes that 
+are +/- one lag from the significant positive spikes. Hence, suggesting a 
+seasonal pattern in the differenced data. Additionally, any strong 
+autocorrelation from the non-difference data has been removed as most lags
+fall outside the boundary line.
+
 ### Question 4
 ```{r, echo=TRUE}
 # this is where your R code goes
-seasonal_diff_ts <- diff(diff_ts, lag = 12, differences = 1)
+acf_values <- acf(diff_ts, plot=FALSE)
+seasonal_period <- which.max(acf_values$acf[2 : length(acf_values$acf)]) 
 
-plot(seasonal_diff_ts, 
+seasonal_diff <- diff(diff_ts, lag=seasonal_period, differences=1)
+
+plot(seasonal_diff, 
      main = "Seasonally Differenced Time Series", 
-     ylab = "Differenced Values", 
+     ylab = "Differenced Value", 
      xlab = "Time")
 
-acf(seasonal_diff_ts, main = "ACF of Seasonally Differenced Time Series")
+acf(seasonal_diff, main = "ACF of Seasonally Differenced Time Series")
 
 ```
+From the acf plot, we can see that it resembles a white noise process.
 
 ### Question 5
-
+From the lecture slides of Chapter 2, I would suggest a SARIMA(p,d,q) * (P,d,Q)s
+model where: d = difference = 1.
+ 
 
 ### Question 6
 
