@@ -99,56 +99,26 @@ model where: d = difference = 1.
 
 (a) 
 
-$Y_t = X_t - Xt_1$ -(1)
-$W_t = Y_t - Y_{t-s}$ - (2)
+Y_t = X_t - Xt_1  -(1) 
+W_t = Y_t - Y_{t-s} - (2) 
 
 Inserting (1) in (2):
-$W_t = Y_t - Y_{t-s}$
-$ = X_t - X_{t-1} - (X_{t-s} - X_{t-s-1})$
-$ = X_t - X_{t-1} - X_{t-s} + X_{t-s-1}$ 
+W_t = Y_t - Y_{t-s} 
+= X_t - X_{t-1} - (X_{t-s} - X_{t-s-1}) 
+ = X_t - X_{t-1} - X_{t-s} + X_{t-s-1} 
 
 (b)
-$Y_t = X_t - X_{t-1}$
-$= (1-B)X_t$
+Y_t = X_t - X_{t-1} 
+= (1-B) X_t 
 
 (c)
-$if B^s Y_t = Y_{t−s}$
 
 Given from Q b) 
-$Y_t = (1-B)X_t$ and 
-$Y_{t-s} = (1-B)X_{t-s} = (1-B)B^sX_t$
+Y_t = (1-B)X_t$ and 
+Y_{t-s} = (1-B) X_{t-s} = (1-B) B^s X_t 
 
-$W_t = Y_t - Y_{t-s}$
-$W_t = (1 - B)X_{t} - [ (1-B)B^sX_t ] $
-$W_t = (1-B)(X_{t} - B^sX_t) $
-$W_t = (1-B)(1-B^s)X_t$
+W_t = Y_t - Y_{t-s} 
+W_t = (1 - B)X_{t} - [ (1-B) B^s X_t ] 
+W_t = (1-B)(X_{t} - B^s X_t) 
+W_t = (1-B)(1-B^s)X_t 
 
-### More information on R Markdown
-
-This is an R Markdown document, which can be used as a template for STAT 443 labs and assignments. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r}
-summary(cars)
-```
-
-Using the function *kable*, it produces a nicer table
-```{r}
-kable(summary(cars))
-```
-
-### Including Plots
-
-You can also embed plots, for example:
-
-```{r, echo=TRUE}
-plot(pressure)
-```
-
-Note that specifying `echo = FALSE` parameter would prevent printing of the R code that generated the plot. This is something you may want to do for larger reports that would not require display of the R code.
-
-You can also modify the size and alignment of the figure.
-```{r, echo=TRUE, fig.cap="title",fig.align='center',fig.height=6,fig.width=4}
-plot(pressure)
-```
