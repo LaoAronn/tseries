@@ -1,6 +1,6 @@
 ---
 title: 'STAT 443: Homework 1'
-author: 'Aronn Grant Laurel (21232475)'
+author: 'Aronn Grant Laurel Y. (21232475)'
 date: "30 January, 2025"
 output:
   pdf_document: default
