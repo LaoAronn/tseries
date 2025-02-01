@@ -94,7 +94,7 @@ acf(error, main = "Residuals ACF")
 For white noise, we should expect each autocorrelation to be close to 0.
 Since we see lags that are outside the boundary line and away from 0, 
 I believe it is inconsistent with a white noise process.
-
+ 
 (e) 
 * the period from January 2019 to December 2020 *
 ```{r, echo=TRUE}
