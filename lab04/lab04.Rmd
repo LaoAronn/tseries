@@ -20,38 +20,76 @@ Without using any mathematical notation, describe in words what it means for a t
 
 For a time series, it's stochastic process is called stationary if its mean is 
 constant. Another way we can determine its stationarity is by observing its 
-plotted data and see a consistent behaviour overtime.
+plotted data and see a consistent behaviour overtime for its variance.
 
 
 
 ### Question 2
 ```{r, echo=TRUE}
 # this is where your R code goes
-data <- read.csv("lab4data.csv")
-ts_data <- ts(data[,1]) 
-
-plot(ts_data, 
-     main = "Time Series Plot",
-     ylab = "Values",
-     xlab = "Time")
-
-adf_test <- adf.test(ts_data)
-print(adf_test)
+data <- read.csv("lab4data.csv", header = TRUE)
+ts_data <- ts(data[,2])
 ```
-Based on our time series plot, a constant positive slope indicating a trend, 
-hence the mean is changing over time and we may consider it as non-stationary.
+
+```{r, echo=TRUE}
+# this is where your R code goes
+plot(ts_data,
+     main="Original Time Series", 
+     xlab="Time",
+     ylab="Values")
+
+# acf(ts_data, main="ACF of Original Time Series")
+
+
+```
+Based on our time series plot, we can see a strong negative slope / trend,hence 
+the mean is changing over time and we may consider it as non-stationary.
 
 ### Question 3
 
+```{r, echo=TRUE}
+# this is where your R code goes
+diff_ts <- diff(ts_data, lag=1, differences=1)
+
+plot(diff_ts,
+     main="Differenced Time Series", 
+     xlab="Time",
+     ylab="Difference")
+
+acf(diff_ts, main="ACF of Differenced Time Series")
 
 
+```
+In our difference time plot, we observe values fluctuating around zero at time 0
+- 60 which could indicate it being stationary. However, we can also see an
+increased fluctuation beyond 60. Although we removed the strong downward trend,
+there might still be some non-stationarity in terms of variance.
 
 ### Question 4
+```{r, echo=TRUE}
+# this is where your R code goes
+seasonal_diff_ts <- diff(diff_ts, lag = 12, differences = 1)
+
+plot(seasonal_diff_ts, 
+     main = "Seasonally Differenced Time Series", 
+     ylab = "Differenced Values", 
+     xlab = "Time")
+
+acf(seasonal_diff_ts, main = "ACF of Seasonally Differenced Time Series")
+
+```
+
+### Question 5
+
+
+### Question 6
 
 (a) 
 
 ```{r, echo=TRUE}
 # this is where your R code goes
+
+
 ```
 
 
