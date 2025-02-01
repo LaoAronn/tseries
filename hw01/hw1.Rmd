@@ -36,7 +36,7 @@ plot(employee_ts,
      xlab = "Year")
 ```
 
-Trend: We can see an steady increase and positive trend in average Wage (CAD) over the years
+Trend: We can see an steady increase and positive trend in average Wage (CAD) over the years.
 
 Seasonality: We can observe seasonal fluctuation every year 
 and a larger fluctuations around after 2020. I believe an 
