@@ -12,21 +12,34 @@ knitr::opts_chunk$set(echo = TRUE)
 #if you do not have the package, type install.packages("name_of_the_package")
 library(knitr)
 library(tseries)
+library(zoo)
 ```
 
 ### Question 1
 Without using any mathematical notation, describe in words what it means for a time series to be stationary. 
 
 For a time series, it's stochastic process is called stationary if its mean is 
-constant. Other way we can determine its stationarity is by observing its plotted
-data and see a consistent behaviour overtime.
+constant. Another way we can determine its stationarity is by observing its 
+plotted data and see a consistent behaviour overtime.
 
 
 
 ### Question 2
+```{r, echo=TRUE}
+# this is where your R code goes
+data <- read.csv("lab4data.csv")
+ts_data <- ts(data[,1]) 
 
+plot(ts_data, 
+     main = "Time Series Plot",
+     ylab = "Values",
+     xlab = "Time")
 
-
+adf_test <- adf.test(ts_data)
+print(adf_test)
+```
+Based on our time series plot, a constant positive slope indicating a trend, 
+hence the mean is changing over time and we may consider it as non-stationary.
 
 ### Question 3
 
