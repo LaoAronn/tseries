@@ -1,0 +1,110 @@
+---
+title: 'STAT 443: Lab 5'
+author: 'Aronn Grant Laurel (21232475)'
+date: "7 February, 2025"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#if you do not have the package, type install.packages("name_of_the_package")
+library(knitr)
+library(tseries)
+library(zoo)
+```
+
+### Question 1
+The process in equation 1 is an AR(3) Process with an order p = 
+
+p(3) = alpha^(k) for k = 1, 2, 3
+alpha^(1) = 0.8
+alpha^(2) = -1/3
+alpha^(3) = 0.6/sqrt(3)
+
+```{r, echo = TRUE}
+# Process AR(3) order in R studio
+alpha1 <- 0.8
+alpha2 <- -1/3
+alpha3 <- 0.6 / sqrt(3)
+
+sigma <- 0.8
+```
+
+alpha^(1) = 0.8
+alpha^(2) = -1/3
+alpha^(3) = 0.6 / sqrt(3)
+
+
+### Question 2
+Explain how to recognize this process based on an observed time series and 
+how to determine its order.
+
+Based on the coefficients, we observe a exponentially decaying function which
+exhibits of a AR(3) process.
+
+
+### Question 3
+Use the command set.seed(23456) to set the random seed for reproducibility and then use function arima.sim() to generate 1500 observations from the model in (1). Plot the simulated time series.
+
+```{r, echo=TRUE}
+set.seed(23456)
+
+q3 <- arima.sim(model = list(ar = c(alpha1, alpha2, alpha3)), n = 1500, sd = sigma)
+plot(q3, xlab = "Value", ylab = "Time")
+
+```
+
+### Question 4
+```{r, echo=TRUE}
+q3_ts <- ts(q3)
+acf(q3_ts, main = "ACF")
+```
+Comment on the behavior of the sample acf, and explain whether it appears as you would expect given the model.
+
+
+### Question 5
+```{r, echo=TRUE}
+pacf(q3_ts, main = "PACF")
+```
+
+
+
+
+### Question 6
+```{r, echo=TRUE}
+
+# Simulate AR(3) process
+Z <- rnorm(1500, mean = 0, sd = 0.8)  # White noise
+X <- numeric(1500)  # Initialize time series
+
+# Generate time series data
+for (t in 4:n) {
+  X[t] <- alpha1 * X[t-1] + alpha2 * X[t-2] + alpha3 * X[t-3] + Z[t]
+}
+
+# Fit AR(3) model with different estimation methods
+model_css_ml <- arima(X, order = c(3, 0, 0), method = "CSS-ML")
+model_ml <- arima(X, order = c(3, 0, 0), method = "ML")
+model_css <- arima(X, order = c(3, 0, 0), method = "CSS")
+
+# Extract parameter estimates
+results <- data.frame(
+  Estimation = c("True Values", "CSS-ML", "ML", "CSS"),
+  alpha1 = c(alpha1, coef(model_css_ml)[1], coef(model_ml)[1], coef(model_css)[1]),
+  alpha2 = c(alpha2, coef(model_css_ml)[2], coef(model_ml)[2], coef(model_css)[2]),
+  alpha3 = c(alpha3, coef(model_css_ml)[3], coef(model_ml)[3], coef(model_css)[3]),
+  Variance = c(sigma, model_css_ml$sigma, model_ml$sigma, model_css$sigma)
+)
+
+# Round to 3 decimal places
+results[, -1] <- round(results[, -1], 3)
+
+# Present results in a table using kable
+kable(results, caption = "Comparison of AR(3) Parameter Estimates Using Different Estimation Methods")
+
+```
+
+
+
