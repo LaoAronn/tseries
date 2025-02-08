@@ -49,8 +49,6 @@ there are no autocorrelation.
 
 
 
-
-
 ### Question 3
 Use the command set.seed(23456) to set the random seed for reproducibility and then use function arima.sim() to generate 1500 observations from the model in (1). Plot the simulated time series.
 
@@ -67,8 +65,12 @@ plot(q3, xlab = "Value", ylab = "Time")
 q3_ts <- ts(q3)
 acf(q3_ts, main = "ACF")
 ```
-Comment on the behavior of the sample acf, and explain whether it appears as you would expect given the model.
 
+The sample ACF plot shows a gradual decay pattern starting at lag 0 with some
+osciliation after lag 16. After lag 14, we start to see insignificant results
+within the boundary line. I believe that our results align with our AR(3) model
+because we see alternating signs which would cause osciliation and the decaying
+pattern is also exhibited in an AR model.
 
 ### Question 5
 ```{r, echo=TRUE}
