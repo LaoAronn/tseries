@@ -41,8 +41,14 @@ alpha^(3) = 0.6 / sqrt(3)
 Explain how to recognize this process based on an observed time series and 
 how to determine its order.
 
-Based on the coefficients, we observe a exponentially decaying function which
-exhibits of a AR(3) process.
+We need to examine for stationarity by its constant mean and invertibility 
+along with it's invertibility. We can also analyze through the ACF plot, 
+where a AR(3) process should show a gradual / smooth decaying pattern.
+In addition, we need to plot its PACF when it cuts off at lag 3 and ensure that
+there are no autocorrelation.
+
+
+
 
 
 ### Question 3
