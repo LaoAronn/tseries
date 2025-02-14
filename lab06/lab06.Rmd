@@ -1,0 +1,60 @@
+---
+title: 'STAT 443: Lab 6'
+author: 'Aronn Grant Laurel (21232475)'
+date: "14 February, 2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#if you do not have the package, type install.packages("name_of_the_package")
+library(knitr)
+library(tseries)
+```
+
+### Question 1
+
+(a) 
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
+
+(b)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
+
+(c)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
+
+### Question 2
+
+(a) 
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
+
+(b)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
+
+(c)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
