@@ -1,0 +1,132 @@
+---
+title: 'STAT 443: Lab 6'
+author: 'Aronn Grant Laurel (21232475)'
+date: "14 February, 2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#if you do not have the package, type install.packages("name_of_the_package")
+library(knitr)
+library(tseries)
+library(zoo)
+```
+
+### Question 1
+(a) 
+
+```{r, echo=TRUE}
+# this is where your R code goes
+
+# a) Extract data & make into time series object
+temp <- read.csv("TempPG.csv")
+
+summer <- temp[, c("Year", "Summer")]
+
+summer_ts <- ts(summer$Summer, 
+                start = min(summer$Year), 
+                frequency = 1)
+
+
+```
+
+(b)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+fig.height=8
+par(mfrow = c(3, 1), mar = c(4, 4, 2.5, 1))
+
+# Time series plot
+plot(summer_ts, 
+     main = "Summer Minimum Temperatures", 
+     ylab = "Temperature",
+     xlab = "Year", 
+     col = "blue")
+
+# sample acf
+acf(summer_ts,
+    main = "Autocorrelation Function (ACF) of Summer Temperatures",      col = "red")
+
+# sample pacf
+pacf(summer_ts,
+     main = "Partial Autocorrelation Function (PACF) of Summer Temperatures",
+     col = "red")
+
+
+```
+(c)
+For our time series plot, we see an noticable increasing trend over 
+time from 1920 to 2000 meaning that there is a general increase in
+summer minimum temperature over the years.
+
+For the ACF plot, we can observe slowly decaying positive 
+autocorrelation at lags 0-15, suggesting a strong trend in the time 
+series.
+
+For the PACF plot, we see significant autocorrelation at lag 1, 2,
+and 5 while the other lags seem to stay within the boundary line.
+
+(d)
+In our ACF function, we see patterns throughout with no cut off in
+patterns, therefore q = 0.
+In our PACF function, we observe a cut off at lag 2, therefore p =2
+
+Hence, I believe an ideal model would be ARMA(2,0)
+
+### Question 2
+
+(a)
+```{r, echo=TRUE}
+# this is where your R code goes
+fit <- arima(summer_ts, order = c(2, 0, 0))
+fit
+```
+
+X_t = 7.1615 + 0.4297X_t-1 + 0.3466X_t-2 + Z_t
+
+### Question 3
+
+```{r, echo=TRUE}
+# this is where your R code goes
+confint(fit)
+```
+We can observe the true values of ar1, ar2, and the true mean
+to be between the values given above.
+
+### Question 4
+
+
+
+
+```{r, echo=TRUE}
+# this is where your R code goes
+fig.height= 20
+# fig.width = 20
+
+par(mfrow = c(3, 1), mar = c(4, 4, 2.5, 1))
+par(fin = c(10, 10))
+
+tsdiag(fit,
+       gof.lag = 20)
+
+
+
+```
+We observe fluctuations and osciliations from 2 to -2 for our 
+standardized residual plot.
+
+For our ACF plot, we can see an osciliation within the boundary for
+all lags starting lag = 1. Mo significant autocorrelation at any lag
+suggests that our model captures the temporal dependence in our data well.
+
+For our p values, we see most p-values are well above 0.05 across 
+different lags which indicates that we fail to reject the null 
+hypothesis of no autocorrelation.
+
+Overall, I believe my ARMA(2,0) model fits well because 
+there are no significant autocorrelation in our residuals and it 
+does not exhibit any patterns.
