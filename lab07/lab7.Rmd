@@ -32,18 +32,31 @@ summer_ar <- arima(summer_ts,
                   )
 summer_ar
 ```
-Y_t = ar1 Y_t-1 + ar2 Y_t-2 + E
-
+X_t = ar1 X_t-1 + ar2 X_t-2 + Z_t
+X_t - 7.1615 = 0.4297 (X_t-1 - 7.1615)  + 0.3466 (X_t-2 - 7.1615) + Z_t
 $$
-Y_t = 0.4297*Y_{t-1} + 0.3466*Y_{t-2} + 7.1615
+X_t = 7.1615 + 0.4297*Y_{t-1} + 0.3466*Y_{t-2} - 0.607
 $$
 
 ### Question 2
 
 ```{r, echo=TRUE}
-# this is where your R code goes
-```
 
+# Lab 6 Sample ACF
+acf(summer_ts,
+    main = "Autocorrelation Function (ACF) of Summer Temperatures")
+
+# Lab 7 ARIMA ACF
+arima_model <-  arima.sim(summer_ar,
+                   model = list(c(0.4297, 0.3466)),
+                   n = 100
+                  )
+acf(arima_model,
+    main="ACF of Residuals from AR(2) Model")
+
+
+```
+I expect the fitted AR(2) 
 ### Question 3
 ### Question 4
 ### Question 5
