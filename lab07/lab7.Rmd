@@ -35,7 +35,7 @@ summer_ar
 X_t = ar1 X_t-1 + ar2 X_t-2 + Z_t
 X_t - 7.1615 = 0.4297 (X_t-1 - 7.1615)  + 0.3466 (X_t-2 - 7.1615) + Z_t
 $$
-X_t = 7.1615 + 0.4297*Y_{t-1} + 0.3466*Y_{t-2} - 0.607
+X_t = 7.1615 + 0.4297*Y_{t-1} + 0.3466*Y_{t-2} + Z_t
 $$
 
 ### Question 2
@@ -44,20 +44,61 @@ $$
 
 # Lab 6 Sample ACF
 acf(summer_ts,
-    main = "Autocorrelation Function (ACF) of Summer Temperatures")
+    main = "Autocorrelation Function (ACF) of Summer Temperatures",
+    lag.max = 20)
 
 # Lab 7 ARIMA ACF
-arima_model <-  arima.sim(summer_ar,
-                   model = list(c(0.4297, 0.3466)),
-                   n = 100
-                  )
+arima_model <-  arima.sim(n = 100, 
+                            model = list(ar = c(0.4297, 0.3466))
+                          )
+
 acf(arima_model,
     main="ACF of Residuals from AR(2) Model")
 
 
 ```
 I expect the fitted AR(2) 
-### Question 3
+
+### Question 3 (Check Ch2)
+```{r, echo=TRUE}
+diff_summer <- diff(summer_ts)
+
+plot(diff_summer,
+     main = "First Differences of Summer Minimum Temperatures",
+     ylab = "First Difference",
+     xlab = "Year")
+
+acf(diff_summer,
+    main = "ACF of First Differences")
+
+pacf(diff_summer,
+     main = "PACF of First Differences")
+```
+
+MA(1)
+
 ### Question 4
+```{r, echo=TRUE}
+
+summer_ma <- arima(summer_ts,
+                   order = c(0, 0, 1)
+                  )
+summer_ma
+
+```
+
 ### Question 5
+```{r, echo=TRUE, fig.height = 5}
+
+tsdiag(summer_ma,
+       gof.lag = 20)
+
+```
+
 ### Question 6
+```{r, echo=TRUE}
+summer_ar
+
+summer_ma
+```
+Since our AR Model has a smaller AIC compared to the MA Model. Therefore, I would select the AR Model over the MA Model
