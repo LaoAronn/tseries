@@ -19,9 +19,24 @@ library(zoo)
 
 
 ```{r, echo=TRUE}
-# this is where your R code goes
-```
+temp <- read.csv("TempPG.csv")
 
+summer <- temp[, c("Year", "Summer")]
+
+summer_ts <- ts(summer$Summer, 
+                start = min(summer$Year), 
+                frequency = 1)
+
+summer_ar <- arima(summer_ts,
+                   order = c(2, 0, 0)
+                  )
+summer_ar
+```
+Y_t = ar1 Y_t-1 + ar2 Y_t-2 + E
+
+$$
+Y_t = 0.4297*Y_{t-1} + 0.3466*Y_{t-2} + 7.1615
+$$
 
 ### Question 2
 
