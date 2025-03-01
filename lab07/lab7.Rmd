@@ -44,7 +44,7 @@ $$
 
 # Lab 6 Sample ACF
 acf(summer_ts,
-    main = "Autocorrelation Function (ACF) of Summer Temperatures",
+    main = "ACF of Summer Temperatures",
     lag.max = 20)
 
 # Lab 7 ARIMA ACF
@@ -53,11 +53,12 @@ arima_model <-  arima.sim(n = 100,
                           )
 
 acf(arima_model,
-    main="ACF of Residuals from AR(2) Model")
+    main="ACF of Summer Temperature from AR(2) Model")
 
 
 ```
-I expect the fitted AR(2) 
+For a theoretical AR(2) Model, I would expect a quick decay but we end
+up seeing a relatively slower decay in our sample ACF.
 
 ### Question 3 (Check Ch2)
 ```{r, echo=TRUE}
@@ -74,8 +75,8 @@ acf(diff_summer,
 pacf(diff_summer,
      main = "PACF of First Differences")
 ```
-
-MA(1)
+Since the ACF cuts off after lag 1 and the PACF shows a slow decay, I 
+would suggest the MA(1) model 
 
 ### Question 4
 ```{r, echo=TRUE}
@@ -87,13 +88,23 @@ summer_ma
 
 ```
 
+$$
+X_t = 7.1823 + 0.4251 * Z_{t-1} + Z_t
+$$
+
 ### Question 5
-```{r, echo=TRUE, fig.height = 5}
+```{r, echo=TRUE, fig.height = 7}
 
 tsdiag(summer_ma,
        gof.lag = 20)
 
 ```
+Our residuals appear arbitrary without any trend or pattern, 
+however, the acf of residuals show no significant 
+autocorrelation and the Ljung-Box test p-values were all
+below our boundary line. Thus, suggesting insignificance and 
+it tells us that the model appear to fit poorly.
+
 
 ### Question 6
 ```{r, echo=TRUE}
