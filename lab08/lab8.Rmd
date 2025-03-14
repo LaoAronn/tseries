@@ -71,18 +71,51 @@ plot(holt_model,
 β = 0.04573451
 γ = 0.4522636
 
-(c)
-
-```{r, echo=TRUE}
+### Question 3
+```{r, echo=TRUE, fig.height = 7}
 # this is where your R code goes
-temp <- read.csv("ww4.csv")
+plot(fitted(holt_model), main = "Fitted HoltWinters Model")
+```
+
+### Question 4
+```{r, echo=TRUE, fig.height = 7}
+# this is where your R code goes
+predictions <- predict(holt_model,
+                       n.ahead = length(test_data),
+                       prediction.interval = TRUE)
+
+plot(test_data,
+     col = "black",
+     type="b",
+     pch=19,
+     main = "Monthly Sales: Actual vs Predicted (1993)",
+     ylab = "A$", xlab = "Time")
+
+
+lines(predictions[, "fit"],
+      type="b",
+      pch=19,
+      col = "blue",
+      lty = 1)
+
+lines(predictions[, "lwr"],
+      type = "l",
+      col = "red",
+      lty = 2)
+
+lines(predictions[, "upr"],
+      type = "l",
+      col = "red",
+      lty = 2)
+
+legend("topleft", 
+       legend = c("Actual", "Predicted", "95% Prediction
+                  Interval"),
+       col = c("black", "blue", "red"),
+       lty = c(1, 1, 2))
 
 ```
 
-
-
-### Question 3
-### Question 4
 ### Question 5
 ### Question 6
 ### Question 7
