@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 library(tseries)
 library(zoo)
+library(forecast)
 ```
 
 ### Question 1
@@ -21,20 +22,35 @@ library(zoo)
 
 ```{r, echo=TRUE}
 # this is where your R code goes
-library(forecast)
-
 souvenir <- scan("souvenir.txt")
 
-souvenir_ts <- ts(souvenir, start = c(1987, 1), frequency = 12)
+souvenir_ts <- ts(souvenir,
+                  start = c(1987, 1),
+                  end = c(1993, 12),
+                  frequency = 12)
+
+train_data <- window(souvenir_ts, 
+                     start = c(1987, 1),
+                     end = c(1993, 1))
+
+test_data <- window(souvenir_ts,
+                    start=c(1993, 2),
+                    end=c(1993, 12))
+
+
 
 plot(souvenir_ts, 
-     main = "Monthly Sales of Souvenir Shop (1987-1993)", 
+     main = "Monthly Sales of Souvenir Shop", 
      ylab = "Sales (A$)",
      xlab = "Time")
 
 acf(souvenir_ts, main = "Sample ACF of Souvenir Sales")
 
+
 ```
+There is a seasonal effect as we can see consistent periodic spikes in the monthly sales. We also see that
+the size of the spikes increase over time and is not consistently the same size which suggests a multiplicative
+model.
 
 
 (b)
@@ -55,10 +71,12 @@ plot(holt_model,
 
 ```{r, echo=TRUE}
 # this is where your R code goes
+temp <- read.csv("ww4.csv")
+
 ```
 
 
-### Question 2
+
 ### Question 3
 ### Question 4
 ### Question 5
