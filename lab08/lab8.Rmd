@@ -57,7 +57,8 @@ model.
 
 ```{r, echo=TRUE}
 # this is where your R code goes
-holt_model <- HoltWinters(souvenir_ts, seasonal = "multiplicative")
+holt_model <- HoltWinters(train_data,
+                          seasonal = "multiplicative")
 holt_model
 
 plot(holt_model,
@@ -66,6 +67,9 @@ plot(holt_model,
      xlab = "Time")
 ```
 
+α = 0.3746875 
+β = 0.04573451
+γ = 0.4522636
 
 (c)
 
