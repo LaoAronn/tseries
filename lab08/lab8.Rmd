@@ -1,0 +1,66 @@
+---
+title: 'STAT 443: Lab 8'
+author: 'Aronn Grant Laurel (21232475)'
+date: "8 March, 2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#if you do not have the package, type install.packages("name_of_the_package")
+library(knitr)
+library(tseries)
+library(zoo)
+```
+
+### Question 1
+
+(a) 
+
+```{r, echo=TRUE}
+# this is where your R code goes
+library(forecast)
+
+souvenir <- scan("souvenir.txt")
+
+souvenir_ts <- ts(souvenir, start = c(1987, 1), frequency = 12)
+
+plot(souvenir_ts, 
+     main = "Monthly Sales of Souvenir Shop (1987-1993)", 
+     ylab = "Sales (A$)",
+     xlab = "Time")
+
+acf(souvenir_ts, main = "Sample ACF of Souvenir Sales")
+
+```
+
+
+(b)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+holt_model <- HoltWinters(souvenir_ts, seasonal = "multiplicative")
+holt_model
+
+plot(holt_model,
+     main = "Holt-Winters Filtering: Souvenir Sales",
+     ylab = "Sales (A$)",
+     xlab = "Time")
+```
+
+
+(c)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
+
+### Question 2
+### Question 3
+### Question 4
+### Question 5
+### Question 6
+### Question 7
