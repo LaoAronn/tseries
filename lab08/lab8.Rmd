@@ -67,9 +67,9 @@ plot(holt_model,
      xlab = "Time")
 ```
 
-α = 0.3746875 
-β = 0.04573451
-γ = 0.4522636
+$\alpha$ = 0.3746875 
+$\beta$ = 0.04573451
+$\gamma$ = 0.4522636
 
 ### Question 3
 ```{r, echo=TRUE, fig.height = 7}
@@ -115,7 +115,19 @@ legend("topleft",
        lty = c(1, 1, 2))
 
 ```
+model follows the data fairly well and the real value is
+usually within the prediction interval except for the
+first data point (February 1993). Some data points were on the
+edge of the prediction intervals where the
+prediction wasn’t as accurate: March 1993, May 1993.
 
 ### Question 5
+```{r, echo=TRUE}
+# this is where your R code goes
+head(predictions, 3)
+```
 ### Question 6
-### Question 7
+I would take the natural logarithm of the data so that we can
+convert it to a additive model then difference the model to
+remove trend/seasonal components to make the process 
+stationary.
