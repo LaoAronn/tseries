@@ -54,15 +54,20 @@ $\ X_t - 579.0319  = 1.0617 * (X_{t-1} - 579.0319) - 0.27*(X_{t-2} - 579.0319) +
 
 ### Question 3
 
-```{r, echo=TRUE}
+```{r, echo=TRUE, fig.height = 7}
 # this is where your R code goes
+acf(model$residuals, main = "ACF of Residuals")
 
+tsdiag(model)
 ```
+
+There are no patterns to our ACF residual plot and standardized residuals, and the p-values for our Ljung-Box Statistics do not show any significant p-value.
 
 ### Question 4
 
 ```{r, echo=TRUE}
 # this is where your R code goes
+
 ```
 
 ### Question 5
