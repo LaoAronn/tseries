@@ -1,0 +1,133 @@
+---
+title: 'STAT 443: Lab 8'
+author: 'Aronn Grant Laurel (21232475)'
+date: "8 March, 2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#if you do not have the package, type install.packages("name_of_the_package")
+library(knitr)
+library(tseries)
+library(zoo)
+library(forecast)
+```
+
+### Question 1
+
+(a) 
+
+```{r, echo=TRUE}
+# this is where your R code goes
+souvenir <- scan("souvenir.txt")
+
+souvenir_ts <- ts(souvenir,
+                  start = c(1987, 1),
+                  end = c(1993, 12),
+                  frequency = 12)
+
+train_data <- window(souvenir_ts, 
+                     start = c(1987, 1),
+                     end = c(1993, 1))
+
+test_data <- window(souvenir_ts,
+                    start=c(1993, 2),
+                    end=c(1993, 12))
+
+
+
+plot(souvenir_ts, 
+     main = "Monthly Sales of Souvenir Shop", 
+     ylab = "Sales (A$)",
+     xlab = "Time")
+
+acf(souvenir_ts, main = "Sample ACF of Souvenir Sales")
+
+
+```
+There is a seasonal effect as we can see consistent periodic spikes in the monthly sales. We also see that
+the size of the spikes increase over time and is not consistently the same size which suggests a multiplicative
+model.
+
+
+(b)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+holt_model <- HoltWinters(train_data,
+                          seasonal = "multiplicative")
+holt_model
+
+plot(holt_model,
+     main = "Holt-Winters Filtering: Souvenir Sales",
+     ylab = "Sales (A$)",
+     xlab = "Time")
+```
+
+$\alpha$ = 0.3746875 
+$\beta$ = 0.04573451
+$\gamma$ = 0.4522636
+
+### Question 3
+```{r, echo=TRUE, fig.height = 7}
+# this is where your R code goes
+plot(fitted(holt_model), main = "Fitted HoltWinters Model")
+```
+
+### Question 4
+```{r, echo=TRUE, fig.height = 7}
+# this is where your R code goes
+predictions <- predict(holt_model,
+                       n.ahead = length(test_data),
+                       prediction.interval = TRUE)
+
+plot(test_data,
+     col = "black",
+     type="b",
+     pch=19,
+     main = "Monthly Sales: Actual vs Predicted (1993)",
+     ylab = "A$", xlab = "Time")
+
+
+lines(predictions[, "fit"],
+      type="b",
+      pch=19,
+      col = "blue",
+      lty = 1)
+
+lines(predictions[, "lwr"],
+      type = "l",
+      col = "red",
+      lty = 2)
+
+lines(predictions[, "upr"],
+      type = "l",
+      col = "red",
+      lty = 2)
+
+legend("topleft", 
+       legend = c("Actual", "Predicted", "95% Prediction
+                  Interval"),
+       col = c("black", "blue", "red"),
+       lty = c(1, 1, 2))
+
+```
+model follows the data fairly well and the real value is
+usually within the prediction interval except for the
+first data point (February 1993). Some data points were on the
+edge of the prediction intervals where the
+prediction wasn’t as accurate: March 1993, May 1993.
+
+### Question 5
+```{r, echo=TRUE}
+# this is where your R code goes
+head(predictions, 3)
+```
+### Question 6
+I would take the natural logarithm of the data so that we can
+convert it to a additive model then difference the model to
+remove trend/seasonal components to make the process 
+stationary.
