@@ -67,6 +67,14 @@ There are no patterns to our ACF residual plot and standardized residuals, and t
 
 ```{r, echo=TRUE}
 # this is where your R code goes
+prediction <- predict(model, n.ahead = 3)
+
+data.frame(
+  Year = 1970:1972,
+  Forecast = prediction$pred,
+  Lower_CI = prediction$pred - 1.96 * prediction$se,
+  Upper_CI = prediction$pred + 1.96 * prediction$se
+)
 
 ```
 
@@ -74,5 +82,13 @@ There are no patterns to our ACF residual plot and standardized residuals, and t
 
 ```{r, echo=TRUE}
 # this is where your R code goes
-```
+data.frame(
+  Year = 1970:1972,
+  Forecast = prediction$pred,
+  Lower_CI = prediction$pred - 1.96 * prediction$se,
+  Upper_CI = prediction$pred + 1.96 * prediction$se,
+  True_Value = data.ts.test
+)
 
+```
+The true values for Year 1970-72 are within our prediction intervals and relatively close to our forecast values.
