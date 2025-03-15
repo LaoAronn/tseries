@@ -1,0 +1,94 @@
+---
+title: 'STAT 443: Lab 9'
+author: 'Aronn Grant Laurel (21232475)'
+date: "14 March, 2025"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#if you do not have the package, type install.packages("name_of_the_package")
+library(knitr)
+library(tseries)
+library(forecast)
+```
+
+### Question 1
+
+```{r, echo=TRUE}
+# this is where your R code goes
+data(LakeHuron)
+
+data.ts.train <- window(LakeHuron,
+                     start = c(1875),
+                     end = c(1969))
+
+data.ts.test <- window(LakeHuron,
+                    start = c(1970),
+                    end = c(1972))
+
+plot(data.ts.train,
+     main = "Annual Level of Lake Huron",
+     xlab = "Time (Year)", ylab = "Annual Lake (ft)")
+
+acf(data.ts.train, main = "ACF of Annual lake Huron")
+
+pacf(data.ts.train, main = "PACF of Annual lake Huron")
+```
+Since we see an exponential decay in our ACF plot and
+a cut off at lag = 2 for our PACF plot, I believe an 
+appropriate ARMA model would be an AR(2) process.
+
+
+### Question 2
+
+```{r, echo=TRUE}
+# this is where your R code goes
+model <- arima(data.ts.train, order = c(2, 0, 0))
+model
+```
+The Model is
+$\ X_t - 579.0319  = 1.0617 * (X_{t-1} - 579.0319) - 0.27*(X_{t-2} - 579.0319) + Z_t$
+
+### Question 3
+
+```{r, echo=TRUE, fig.height = 7}
+# this is where your R code goes
+acf(model$residuals, main = "ACF of Residuals")
+
+tsdiag(model)
+```
+
+There are no patterns to our ACF residual plot and standardized residuals, and the p-values for our Ljung-Box Statistics do not show any significant p-value.
+
+### Question 4
+
+```{r, echo=TRUE}
+# this is where your R code goes
+prediction <- predict(model, n.ahead = 3)
+
+data.frame(
+  Year = 1970:1972,
+  Forecast = prediction$pred,
+  Lower_CI = prediction$pred - 1.96 * prediction$se,
+  Upper_CI = prediction$pred + 1.96 * prediction$se
+)
+
+```
+
+### Question 5
+
+```{r, echo=TRUE}
+# this is where your R code goes
+data.frame(
+  Year = 1970:1972,
+  Forecast = prediction$pred,
+  Lower_CI = prediction$pred - 1.96 * prediction$se,
+  Upper_CI = prediction$pred + 1.96 * prediction$se,
+  True_Value = data.ts.test
+)
+
+```
+The true values for Year 1970-72 are within our prediction intervals and relatively close to our forecast values.
