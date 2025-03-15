@@ -1,0 +1,115 @@
+---
+title: 'STAT 443: Lab 7'
+author: 'Aronn Grant Laurel (21232475)'
+date: "28 February 2025"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#if you do not have the package, type install.packages("name_of_the_package")
+library(knitr)
+library(tseries)
+library(zoo)
+```
+
+### Question 1
+
+
+```{r, echo=TRUE}
+temp <- read.csv("TempPG.csv")
+
+summer <- temp[, c("Year", "Summer")]
+
+summer_ts <- ts(summer$Summer, 
+                start = min(summer$Year), 
+                frequency = 1)
+
+summer_ar <- arima(summer_ts,
+                   order = c(2, 0, 0)
+                  )
+summer_ar
+```
+X_t = ar1 X_t-1 + ar2 X_t-2 + Z_t
+X_t - 7.1615 = 0.4297 (X_t-1 - 7.1615)  + 0.3466 (X_t-2 - 7.1615) + Z_t
+$$
+X_t = 7.1615 + 0.4297*Y_{t-1} + 0.3466*Y_{t-2} + Z_t
+$$
+
+### Question 2
+
+```{r, echo=TRUE}
+
+# Lab 6 Sample ACF
+acf(summer_ts,
+    main = "ACF of Summer Temperatures",
+    lag.max = 20)
+
+# Lab 7 ARIMA ACF
+arima_model <-  arima.sim(n = 100, 
+                            model = list(ar = c(0.4297, 0.3466))
+                          )
+
+acf(arima_model,
+    main="ACF of Summer Temperature from AR(2) Model")
+
+
+```
+For a theoretical AR(2) Model, I would expect a quick decay but we end
+up seeing a relatively slower decay in our sample ACF.
+
+### Question 3 (Check Ch2)
+```{r, echo=TRUE}
+diff_summer <- diff(summer_ts)
+
+plot(diff_summer,
+     main = "First Differences of Summer Minimum Temperatures",
+     ylab = "First Difference",
+     xlab = "Year")
+
+acf(diff_summer,
+    main = "ACF of First Differences")
+
+pacf(diff_summer,
+     main = "PACF of First Differences")
+```
+Since the ACF cuts off after lag 1 and the PACF shows a slow decay, I 
+would suggest the MA(1) model 
+
+### Question 4
+```{r, echo=TRUE}
+
+summer_ma <- arima(summer_ts,
+                   order = c(0, 0, 1)
+                  )
+summer_ma
+
+```
+
+$$
+X_t = 7.1823 + 0.4251 * Z_{t-1} + Z_t
+$$
+
+### Question 5
+```{r, echo=TRUE, fig.height = 7}
+
+tsdiag(summer_ma,
+       gof.lag = 20)
+
+```
+Our residuals appear arbitrary without any trend or pattern, 
+however, the acf of residuals show no significant 
+autocorrelation and the Ljung-Box test p-values were all
+below our boundary line. Thus, suggesting insignificance and 
+it tells us that the model appear to fit poorly.
+
+
+### Question 6
+```{r, echo=TRUE}
+summer_ar
+
+summer_ma
+```
+Since our AR Model has a smaller AIC compared to the MA Model. Therefore, I would select the AR Model over the MA Model
