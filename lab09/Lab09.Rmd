@@ -46,13 +46,17 @@ appropriate ARMA model would be an AR(2) process.
 
 ```{r, echo=TRUE}
 # this is where your R code goes
+model <- arima(data.ts.train, order = c(2, 0, 0))
+model
 ```
-
+The Model is
+$\ X_t - 579.0319  = 1.0617 * (X_{t-1} - 579.0319) - 0.27*(X_{t-2} - 579.0319) + Z_t$
 
 ### Question 3
 
 ```{r, echo=TRUE}
 # this is where your R code goes
+
 ```
 
 ### Question 4
