@@ -19,7 +19,27 @@ library(forecast)
 
 ```{r, echo=TRUE}
 # this is where your R code goes
+data(LakeHuron)
+
+data.ts.train <- window(LakeHuron,
+                     start = c(1875),
+                     end = c(1969))
+
+data.ts.test <- window(LakeHuron,
+                    start = c(1970),
+                    end = c(1972))
+
+plot(data.ts.train,
+     main = "Annual Level of Lake Huron",
+     xlab = "Time (Year)", ylab = "Annual Lake (ft)")
+
+acf(data.ts.train, main = "ACF of Annual lake Huron")
+
+pacf(data.ts.train, main = "PACF of Annual lake Huron")
 ```
+Since we see an exponential decay in our ACF plot and
+a cut off at lag = 2 for our PACF plot, I believe an 
+appropriate ARMA model would be an AR(2) process.
 
 
 ### Question 2
