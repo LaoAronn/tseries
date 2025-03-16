@@ -16,14 +16,65 @@ library(forecast)
 ```
 
 ### Question 1
-```{r, echo=TRUE}
+```{r, echo=TRUE, fig.height = 7}
 # this is where your R code goes
+
+data <- read.csv("employee_wages_total_industry.csv")
+
+data.ts <- ts(data$employee_wages,
+              start = c(1997, 1),
+              frequency = 12)
+
+# January 1997 to December 2018 as the training set for model fitting
+data.ts.train <- window(data.ts,
+                        start = c(1997, 1),
+                        end = c(2018, 12),
+                        frequency = 12)
+  
+# from January 2019 to December 2019 as the test set
+data.ts.test <- window(data.ts,
+                       start = c(2019, 1),
+                       end = c(2019, 12),
+                       frequency = 12)
+
+# LOESS Smoothing
+data.ts.ls <- stl(data.ts.train, s.window = "periodic")
+
+error.ls <- data.ts.ls$time.series[, "remainder"]
+plot(error.ls)
+
+# Model fitting for Remainder Term
+error.time.ls <- seq_along(error.ls)
+error.ls.df <- data.frame("Remainder" = error.ls,
+                          "Time" = error.time.ls)
+
+acf(as.vector(error.ls),
+    lag.max = 50,
+    main = "Correlogram of Error Term")
+
+pacf(as.vector(error.ls),
+     lag.max = 50,
+     main = "PACF of Error Term")
+
 ```
+
+From the time plot, we can observe an oscilation at value
+0 while there are no obvious trend / pattern.
+
+Our acf plot shows no consistency with a white noise 
+process which suggests there is still some seasonal 
+pattern in the remainder term / Process remembers itself.
+
+Our PACF plot shows no consistency with a more 'damped'
+wave / oscilation.
+
+We observe a series with a cyclical component.
 
 
 ### Question 2
 ```{r, echo=TRUE}
 # this is where your R code goes
+
 ```
 
 
