@@ -19,11 +19,13 @@ library(forecast)
 ```{r, echo=TRUE, fig.height = 7}
 # this is where your R code goes
 
+# Initialisation
 data <- read.csv("employee_wages_total_industry.csv")
 
 data.ts <- ts(data$employee_wages,
               start = c(1997, 1),
               frequency = 12)
+
 
 # January 1997 to December 2018 as the training set for model fitting
 data.ts.train <- window(data.ts,
@@ -36,39 +38,57 @@ data.ts.test <- window(data.ts,
                        start = c(2019, 1),
                        end = c(2019, 12),
                        frequency = 12)
+plot(data.ts,
+     main = "Canada Average Hourly Wage Rate",
+     xlab = "Time (Year)",
+     ylab = "Average Wage Rate ($)")
 
-# LOESS Smoothing
-data.ts.ls <- stl(data.ts.train, s.window = "periodic")
+# LOESS Smoothing 
+# De-seasonalize Series
+data.ts.ls <- stl(data.ts.train,
+                  s.window = "periodic")
 
 error.ls <- data.ts.ls$time.series[, "remainder"]
-plot(error.ls)
 
-# Model fitting for Remainder Term
+# ARMA Model fitting for Remainder Term
 error.time.ls <- seq_along(error.ls)
 error.ls.df <- data.frame("Remainder" = error.ls,
                           "Time" = error.time.ls)
 
-acf(as.vector(error.ls),
-    lag.max = 50,
+```
+
+From the time plot, we can observe clear upward trend 
+meaning that our mean is not constant and therefore not
+stationary. We should apply an ARIMA series with d > 0 to
+transform the series into a stationary process, but in
+our question we will be fitting an ARMA model (d = 0).
+
+```{r, echo=TRUE, fig.height = 7}
+# this is where your R code goes
+error.ts <- ts(error.ls)
+
+acf(error.ts,
+    lag.max = 20,
     main = "Correlogram of Error Term")
 
-pacf(as.vector(error.ls),
-     lag.max = 50,
+pacf(error.ts,
+     lag.max = 20,
      main = "PACF of Error Term")
 
 ```
+Our ACF plot shows a cut-off at lag 1 and it begins to 
+oscillate and stay close to 0 / within the bounds. 
+On the other hand, we observe a negative cut off at lag 8 which we will use p = 8
+for our ARMA model (a Pure AR(8) Process)
 
-From the time plot, we can observe an oscilation at value
-0 while there are no obvious trend / pattern.
+```{r, echo=TRUE, fig.height = 7}
+# this is where your R code goes
+# Fitting our model
+model <- arima(error.ts, order = c(0, 0, 8))
+model
 
-Our acf plot shows no consistency with a white noise 
-process which suggests there is still some seasonal 
-pattern in the remainder term / Process remembers itself.
-
-Our PACF plot shows no consistency with a more 'damped'
-wave / oscilation.
-
-We observe a series with a cyclical component.
+tsdiag(model)
+```
 
 
 ### Question 2
