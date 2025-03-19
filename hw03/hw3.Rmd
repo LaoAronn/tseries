@@ -15,7 +15,7 @@ library(tseries)
 library(forecast)
 ```
 
-### Question 1
+### Question 1 ARMA Model
 ```{r, echo=TRUE, fig.height = 7}
 # this is where your R code goes
 
@@ -48,6 +48,9 @@ plot(data.ts,
 data.ts.ls <- stl(data.ts.train,
                   s.window = "periodic")
 
+# From HW1
+trend.ls <- data.ts.ls$time.series[,"trend"]
+seas.ls <- data.ts.ls$time.series[,"seasonal"]
 error.ls <- data.ts.ls$time.series[, "remainder"]
 
 # ARMA Model fitting for Remainder Term
@@ -76,10 +79,9 @@ pacf(error.ts,
      main = "PACF of Error Term")
 
 ```
-Our ACF plot shows a cut-off at lag 1 and it begins to 
-oscillate and stay close to 0 / within the bounds. 
-On the other hand, we observe a negative cut off at lag 8 which we will use p = 8
-for our ARMA model (a Pure AR(8) Process)
+Our ACF plot shows a 'damped' like sine wave and
+our PACF plot displays a negative cut off at lag 6 and 8 which we will use (p)
+for our ARMA model (a Pure AR Process) and assess the better fitted model.
 
 ```{r, echo=TRUE, fig.height = 7}
 # this is where your R code goes
@@ -87,24 +89,117 @@ for our ARMA model (a Pure AR(8) Process)
 model <- arima(error.ts, order = c(0, 0, 8))
 model
 
+model_2 <- arima(error.ts, order = c(0, 0, 6))
+model_2
+
 tsdiag(model)
 ```
 
+After comparing the models of ARMA(8, 0) and ARMA(6, 0), 
+I have decided on ARMA(8, 0) because it produces the smallest AIC value between
+the two models. Furthermore, it's diagnostic plots shows an arbitrary standardized
+residual plot with no obvious pattern. The ACF of residuals displays insignificant
+lag values aside from lag 0 which ressembles a White Noise process along with
+non-significant p-values throughout our Ljung-Box Statistics plot. Hence, I believe
+our ARMA(8, 0) fitted model is the better fit for the remainder term.
 
-### Question 2
+The Fitted ARMA Model
+$\ X_t = -0.0006 + 0.4853Z_{t-1} + 0.1137Z_{t-2} - 0.1369Z_{t-3} - 0.2723Z_{t-4} - 0.3352Z_{t-5} - 0.3242Z_{t-6} - 0.1494Z_{t-7} - 0.1021Z_{t-8}$
+
 ```{r, echo=TRUE}
 # this is where your R code goes
+# Remainder Component
+remainder_forecast <- predict(model, n.ahead = 12)
+remainder_lower <- remainder_forecast$pred - 1.96 * remainder_forecast$se
+remainder_upper <- remainder_forecast$pred + 1.96 * remainder_forecast$se
+
+# Trend Component
+trend.time.ls <- seq_along(trend.ls)
+trend.ls.df <- data.frame('trend'=trend.ls, 'time'=trend.time.ls)
+trend_model.ls <- lm(trend ~ time, data=trend.ls.df)
+trend_forecast_times <- max(trend.time.ls) + 1:12
+trend_forecast <- predict(trend_model.ls, newdata=data.frame('time'=trend_forecast_times))
+
+# Seasonal Component
+seasonal_forecast <- seas.ls[1:12]
+
+final_forecast <- trend_forecast + seasonal_forecast + remainder_forecast$pred
+
+forecast_ts <- ts(final_forecast,
+                     start=c(2019, 1),
+                     frequency=12)
+
+# Prediction Interval
+lower_pi <- trend_forecast + seasonal_forecast + remainder_lower
+upper_pi <- trend_forecast + seasonal_forecast + remainder_upper
+
+lower_ts <- ts(lower_pi, start=c(2019, 1), frequency=12)
+upper_ts <- ts(upper_pi, start=c(2019, 1), frequency=12)
+
+# Prediction Table (From Lab 9)
+
+forecast_table <- data.frame(Month = month.abb[1:12],
+                             True_Value = data.ts.test,
+                             Forecast = forecast_ts,
+                             Lower_CI = lower_ts,
+                             Upper_CI = upper_ts
+                             )
+
+kable(forecast_table,
+      caption = "Monthly Forecasts of Average Hourly Wage Rates (2019)",
+      align = c('l', rep('c', 5)))
 
 ```
+
+
+```{r, echo=TRUE, fig.height = 7}
+# this is where your R code goes
+# From Lab 8 Prediction plot
+plot(data.ts.test,
+    main = "Average Hourly Wage Rates in 2019: Actual vs Predicted",
+    ylab = "Wage Rates (CAD)",
+    ylim = c(min(lower_pi)-0.2, max(upper_pi)+0.2),
+    col = "black",
+    type = "b",
+    pch = 19)
+
+# Prediction
+lines(forecast_ts, 
+      col = "blue",
+      type = "b",
+      pch = 19)
+
+# Prediction interval
+lines(lower_ts,
+      type = "l",
+      col = "red",
+      lty = 2)
+
+lines(upper_ts,
+      type = "l",
+      col = "red",
+      lty = 2)
+
+legend("topleft",
+        legend=c("Actual Test Data", "Forecast", "95% Prediction Interval"),
+        col=c("black", "blue", "red"),
+        lty=c(1, 1, 2),
+        lwd=c(2, 2, 1))
+
+
+```
+
+### Question 2 Box-Jenkins
+```{r, echo=TRUE}
+# this is where your R code goes
+acf(ts(wage_data.ts.train), main="ACF of Original Series")
+
+```
+
+
 
 
 ### Question 3
-```{r, echo=TRUE}
-# this is where your R code goes
-```
-
-
-### Question 4
 ```{r, echo=TRUE}
 # this is where your R code goes
 ```
