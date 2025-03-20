@@ -137,7 +137,6 @@ lower_ts <- ts(lower_pi, start=c(2019, 1), frequency=12)
 upper_ts <- ts(upper_pi, start=c(2019, 1), frequency=12)
 
 # Prediction Table (From Lab 9)
-
 forecast_table <- data.frame(Month = month.abb[1:12],
                              True_Value = data.ts.test,
                              Forecast = forecast_ts,
@@ -209,9 +208,12 @@ model for Holt-Winters' Exponential Smoothing Fit.
 # From Lab 8
 hw_model <- HoltWinters(data.ts.train, seasonal = "additive")
 
-plot(hw_model, main="Holt-Winters' Filtering")
+plot(hw_model, main="Holt-Winters' Exponential Smoothing Fit")
 
-hw_predictions <- predict(hw_model, n.ahead = 12, prediction.interval = TRUE)
+hw_predictions <- predict(hw_model,
+                          n.ahead = 12,
+                          prediction.interval = TRUE)
+
 hw_fit <- hw_predictions[, "fit"]
 hw_lower <- hw_predictions[, "lwr"]
 hw_upper <- hw_predictions[, "upr"]
@@ -220,6 +222,19 @@ hw_forecast_ts <- ts(hw_fit, start = c(2019, 1), frequency = 12)
 
 hw_lower_ts <- ts(hw_lower, start = c(2019, 1), frequency = 12)
 hw_upper_ts <- ts(hw_upper, start = c(2019, 1), frequency = 12)
+
+# Prediction Table (From Lab 9)
+hw_forecast_table <- data.frame(Month = month.abb[1:12],
+                             True_Value = data.ts.test,
+                             Forecast = hw_forecast_ts,
+                             Lower_CI = hw_lower_ts,
+                             Upper_CI = hw_upper_ts
+                             )
+
+kable(forecast_table,
+      caption = "Monthly Forecasts of Average Hourly Wage Rates (2019)",
+      align = c('l', rep('c', 5)))
+
 
 plot(data.ts.test,
      main="Holt-Winters' Average Hourly Wage Rates: Predtiction vs Actual (2019)",
@@ -233,14 +248,12 @@ lines(hw_forecast_ts, col="blue", lwd=2)
 lines(hw_lower_ts, col="red", lty=2)
 lines(hw_upper_ts, col="red", lty=2)
 
-legend("bottomright",
+legend("topleft",
        legend=c("Actual Test Data", "Holt-Winters Forecast", "95% Prediction Interval"),
        col=c("black", "blue", "red"),
-       lty=c(1, 1, 2),
-       lwd=c(2, 2, 1))
+       lty=c(1, 1, 2))
 
 ```
-
 
 
 
@@ -248,3 +261,5 @@ legend("bottomright",
 ```{r, echo=TRUE}
 # this is where your R code goes
 ```
+
+Based on our gathered forecasts, the true values for are within our prediction intervals and relatively close to our forecast values.
