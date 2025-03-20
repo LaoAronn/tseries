@@ -417,4 +417,21 @@ kable(table_compare,
 
 Based on our gathered forecasts, the true values for are mostly within our prediction intervals
 but we get ARMA (seasonal decomposition) as the best model amongst them all because it has
-the smallest MSPE.
+the smallest MSPE. 
+
+Pros & Cons
+Method 1)
+We get better Flexibility by isolating the remainder term because we have an ARMA model
+that is specifically tailored to the stochastic part of our training data, however, 
+we need to assume stationarity in order to use ARMA, hence, the remainder term must be stationary
+which may not always work for other data sets.
+ 
+Method 2)
+In contrast to Method 1), SARIMA models can handle non-stationary data by differencing,
+making them more flexible for non-stationary data sets. In spite of that, Method 1 & 2)
+could be subjective in terms of picking the 'best' (p, d, q, P, D, Q) and s.
+
+Method 3)
+Using Holt-Winters' forecasting, we can extend the series with a trend and seasonal 
+variation components and it is relatively shorter in terms of computation compared to
+Method 1 and 2. Similar to our ARMA model, it may not be flexible for non-linear series.
