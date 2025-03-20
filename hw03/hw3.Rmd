@@ -145,8 +145,7 @@ forecast_table <- data.frame(Month = month.abb[1:12],
                              )
 
 kable(forecast_table,
-      caption = "Monthly Forecasts of Average Hourly Wage Rates (2019)",
-      align = c('l', rep('c', 5)))
+      caption = "Monthly Forecasts of Average Hourly Wage Rates (2019)")
 
 ```
 
@@ -344,8 +343,7 @@ hw_forecast_table <- data.frame(Month = month.abb[1:12],
                              )
 
 kable(forecast_table,
-      caption = "Monthly Forecasts of Average Hourly Wage Rates (2019)",
-      align = c('l', rep('c', 5)))
+      caption = "Monthly Forecasts of Average Hourly Wage Rates (2019)")
 
 
 plot(data.ts.test,
@@ -368,7 +366,7 @@ legend("topleft",
 
 
 
-### Question 4
+### Question 4 Model Comparison
 ```{r, echo=TRUE}
 # GRAPH
 plot(data.ts.test,
