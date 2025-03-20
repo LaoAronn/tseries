@@ -104,7 +104,7 @@ non-significant p-values throughout our Ljung-Box Statistics plot. Hence, I beli
 our ARMA(8, 0) fitted model is the better fit for the remainder term.
 
 The Fitted ARMA Model
-$\ X_t = -0.0006 + 0.4853Z_{t-1} + 0.1137Z_{t-2} - 0.1369Z_{t-3} - 0.2723Z_{t-4} - 0.3352Z_{t-5} - 0.3242Z_{t-6} - 0.1494Z_{t-7} - 0.1021Z_{t-8}$
+$\ X_t = -0.0006 + 0.4853X_{t-1} + 0.1137X_{t-2} - 0.1369X_{t-3} - 0.2723X_{t-4} - 0.3352X_{t-5} - 0.3242X_{t-6} - 0.1494X_{t-7} - 0.1021X_{t-8} + Z_t$
 
 ```{r, echo=TRUE}
 # this is where your R code goes
