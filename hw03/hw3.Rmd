@@ -371,13 +371,41 @@ legend("topleft",
 ### Question 4
 ```{r, echo=TRUE}
 # GRAPH
+plot(data.ts.test,
+     col = "black",
+     pch = 19,
+     type = "b",
+     xlab="Month (2019)",
+     ylab="Average Hourly Wage Rate (CAD)",
+     main="Forecasting Methods vs True Value",
+     ylim=range(c(data.ts.test, forecast_ts, sarima_forecast_ts, hw_forecast_ts))
+     )
+
+lines(forecast_ts, col="red", lwd=2)
+lines(sarima_forecast_ts, col="green", lwd=2)
+lines(hw_forecast_ts, col="blue", lwd=2)
+
+legend("topleft",
+       legend=c("Test Data", "ARMA Model", "SARIMA Model", "Holt-Winters Forecast"),
+       col=c("black", "red", "green", "blue"),
+       lty=c(1, 1, 2))
 
 ```
 
 
 ```{r, echo=TRUE}
 # Table
+arma_mspe <- mean((data.ts.test - forecast_ts)^2)
+sarima_mspe <- mean((data.ts.test - sarima_forecast_ts)^2)
+hw_mspe <- mean((data.ts.test - hw_forecast_ts)^2)
+
+table_compare <- data.frame(Model = c("ARMA", "SARIMA", "Holt-Winters"),
+                            MSPE = c(arma_mspe, sarima_mspe, hw_mspe))
+kable(table_compare,
+      caption = "Forecast Models Comparison w/ Mean Squared Prediction Error")
 
 ```
 
-Based on our gathered forecasts, the true values for are within our prediction intervals and relatively close to our forecast values.
+Based on our gathered forecasts, the true values for are mostly within our prediction intervals
+but we get ARMA (seasonal decomposition) as the best model amongst them all because it has
+the smallest MSPE.
