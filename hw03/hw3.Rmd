@@ -208,39 +208,50 @@ Now, we will be removing the linear trend by using the diff function with differ
 and remove its seasonality by differencing over 1 full season (12 months)
 
 ```{r, echo=TRUE}
-# FROM LAB 4
-# Trend Differencing
-diff_1 <- diff(data.ts.train, differences = 1)
+# FROM LAB 4 & Chapter 3
+# Applying Seasonal Differencing
+diff_1 <- diff(data.ts.train, lag = frequency(data.ts.train))
 
 plot(diff_1, 
      main="First-Order Differenced Time Series",
      xlab = "Time", ylab = "Differenced Hourly Wage Rate")
 
-acf(ts(diff_1), main = "ACF of First Order Differenced Series")
+acf(ts(diff_1), main = "ACF of Seasonal Differenced Series")
 
-pacf(ts(diff_1), main = "PACF of First Order Differenced Series")
+pacf(ts(diff_1), main = "PACF of Seasonal Differenced Series")
+
+```
+Applying seasonal differencing, we can observe a white noise resemblance in our pacf and acf plots. Hence,
+we can say that our p and q will be 0.
+
+```{r, echo=TRUE}
+# FROM LAB 4 & Chapter 3
 
 # Seasonality Differencing
-seasonal_diff <- diff(diff_1, lag = frequency(data.ts.train))
+seasonal_diff <- diff(diff_1, differences = 1)
 
 plot(seasonal_diff,
      main = "Seasonally Differenced Series",
      xlab = "Time", ylab = "Differenced Hourly Wage Rate"
      )
 
-acf(ts(seasonal_diff), lag.max = 30,
-    main="ACF of Seasonally Differenced Time Series")
+acf(ts(seasonal_diff), lag.max = 50,
+    main="ACF of Seasonal + Trend Differenced Time Series")
 
-pacf(ts(seasonal_diff), lag.max = 30,
-     main="PACF of Seasonally Differenced Time Series")
-
+pacf(ts(seasonal_diff), lag.max = 100,
+     main="PACF of Seasonal + Trend Differenced Time Series")
 
 ```
-After differencing, it was quite difficult to determine the perfect cut off
-on our acf and pacf plots after our differencing and seasonal order. Hence,
-I will be using auto.arima() function to find the best ARIMA model for our 
-time series training dataset.
 
+After our seasonal and trend differencing, we observe a cut off at 12 in our 
+ACF plot while the PACF plot tails off like a 'damped' wave. Hence, we can determine
+that it is a pure MA(12) process. Since the values is a multiple of the seasonal period 12, 
+so we should get Q = 12/12 = 1. 
+
+Therefore, our ARIMA model would be. ARIMA(0, 1, 0)(0, 1, 1)_12
+
+For Sanity check, function auto.arima() is used to check if our determined model is
+the best ARIMA model based off it's AIC value.
 ```{r, echo=TRUE, fig.height = 7}
 # this is where your R code goes
 arima_selection <- auto.arima(data.ts.train, seasonal = TRUE)
