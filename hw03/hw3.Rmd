@@ -156,7 +156,7 @@ kable(forecast_table,
 # From Lab 8 Prediction plot
 plot(data.ts.test,
     main = "Average Hourly Wage Rates in 2019: Actual vs Predicted",
-    ylab = "Wage Rates (CAD)",
+    ylab = "Hourly Wage Rates (CAD)",
     ylim = c(min(lower_pi)-0.2, max(upper_pi)+0.2),
     col = "black",
     type = "b",
@@ -189,14 +189,126 @@ legend("topleft",
 ```
 
 ### Question 2 Box-Jenkins
+
 ```{r, echo=TRUE}
 # this is where your R code goes
-acf(ts(wage_data.ts.train), main="ACF of Original Series")
+plot(data.ts.train, main = "Time Series plot for Average Hourly Wage Rate")
 
 ```
+Based on our time series plot, we can see a strong positive slope / trend, hence 
+the mean is changing over time and we may consider it as non-stationary. Hence,
+I will be removing its trend and seasonal components to make the series
+stationary.
 
 
+```{r, echo=TRUE}
+# this is where your R code goes
+acf(data.ts.train, main="ACF of Original Series")
+```
+Now, we will be removing the linear trend by using the diff function with difference = 1
+and remove its seasonality by differencing over 1 full season (12 months)
 
+```{r, echo=TRUE}
+# FROM LAB 4
+# Trend Differencing
+diff_1 <- diff(data.ts.train, differences = 1)
+
+plot(diff_1, 
+     main="First-Order Differenced Time Series",
+     xlab = "Time", ylab = "Differenced Hourly Wage Rate")
+
+acf(ts(diff_1), main = "ACF of First Order Differenced Series")
+
+pacf(ts(diff_1), main = "PACF of First Order Differenced Series")
+
+# Seasonality Differencing
+seasonal_diff <- diff(diff_1, lag = frequency(data.ts.train))
+
+plot(seasonal_diff,
+     main = "Seasonally Differenced Series",
+     xlab = "Time", ylab = "Differenced Hourly Wage Rate"
+     )
+
+acf(ts(seasonal_diff), lag.max = 30,
+    main="ACF of Seasonally Differenced Time Series")
+
+pacf(ts(seasonal_diff), lag.max = 30,
+     main="PACF of Seasonally Differenced Time Series")
+
+
+```
+After differencing, it was quite difficult to determine the perfect cut off
+on our acf and pacf plots after our differencing and seasonal order. Hence,
+I will be using auto.arima() function to find the best ARIMA model for our 
+time series training dataset.
+
+```{r, echo=TRUE, fig.height = 7}
+# this is where your R code goes
+arima_selection <- auto.arima(data.ts.train, seasonal = TRUE)
+summary(arima_selection)
+
+tsdiag(arima_selection)
+```
+
+I believe that $\ SARIMA(0,1,0)*(0,1,1)_{12} $ would fit the data best
+based on its small AIC value. Furthermore, the diagnostic plot suggests a good fit because
+the standardized residuals has no pattern, the acf of the residuals is a white noise process, 
+and the p-values for Ljung-Box are insignificant.
+
+```{r, echo=TRUE}
+# this is where your R code goes
+# Forecasting
+sarima_forecast <- predict(arima_selection, n.ahead=12)
+
+sarima_pred <- sarima_forecast$pred
+sarima_forecast_lower <- sarima_pred - 1.96 * sarima_forecast$se
+sarima_forecast_upper <- sarima_pred + 1.96 * sarima_forecast$se
+
+sarima_forecast_ts <- ts(sarima_pred, start=c(2019, 1), frequency=12)
+sarima_lower_ts <- ts(sarima_forecast_lower, start=c(2019, 1), frequency=12)
+sarima_upper_ts <- ts(sarima_forecast_upper, start=c(2019, 1), frequency=12)
+
+
+# Prediction Table (From Lab 9)
+forecast_table <- data.frame(Month = month.abb[1:12],
+                             True_Value = data.ts.test,
+                             Forecast = sarima_forecast_ts,
+                             Lower_CI = sarima_lower_ts,
+                             Upper_CI = sarima_upper_ts
+                             )
+
+
+# Graph
+
+plot(data.ts.test,
+     main = "SARIMA Average Hourly Wage Rates in 2019: Actual vs Predicted",
+     ylab = "Hourly Wage Rates (CAD)",
+     ylim = c(min(sarima_lower_ts) - 0.2, max(sarima_upper_ts) + 0.2),
+     col = "black",
+     type = "b",
+     pch = 19)
+
+lines(sarima_forecast_ts,
+      col="blue",
+      type = "b",
+      pch = 19)
+
+lines(sarima_lower_ts,
+      col="red",
+      lty = 2)
+
+lines(sarima_upper_ts,
+      col="red",
+      lty = 2)
+
+legend("topleft",
+        legend=c("Actual Test Data", "Forecast", "95% Prediction Interval"),
+        col=c("black", "blue", "red"),
+        lty=c(1, 1, 2),
+        lwd=c(2, 2, 1))
+
+
+```
 
 ### Question 3 Holt-Winters
 
@@ -238,11 +350,10 @@ kable(forecast_table,
 
 plot(data.ts.test,
      main="Holt-Winters' Average Hourly Wage Rates: Predtiction vs Actual (2019)",
+     ylim=range(c(data.ts.test, hw_lower, hw_upper)),
      ylab="Wage Rates (CAD)",
      xlab="Time",
-     col="black",
-     lwd=2,
-     ylim=range(c(data.ts.test, hw_lower, hw_upper)))
+     col="black")
 
 lines(hw_forecast_ts, col="blue", lwd=2)
 lines(hw_lower_ts, col="red", lty=2)
@@ -259,7 +370,14 @@ legend("topleft",
 
 ### Question 4
 ```{r, echo=TRUE}
-# this is where your R code goes
+# GRAPH
+
+```
+
+
+```{r, echo=TRUE}
+# Table
+
 ```
 
 Based on our gathered forecasts, the true values for are within our prediction intervals and relatively close to our forecast values.
