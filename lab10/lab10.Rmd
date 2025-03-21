@@ -20,7 +20,16 @@ library(forecast)
 (a)
 
 ```{r, echo=TRUE}
+freq <- seq(0, 0.5, length.out = 100)
 
+spectral_density <- rep(1/(2*pi), length(freq))
+
+plot(freq,
+     spectral_density, 
+     xlab = "Frequency (cycles per unit time)", 
+     ylab = "Spectral Density", 
+     main = "Spectral Density Function for White Noise",
+     type = "l")
 ```
 
 
