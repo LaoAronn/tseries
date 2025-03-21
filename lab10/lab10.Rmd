@@ -36,6 +36,22 @@ plot(freq,
 (b)
 
 ```{r, echo=TRUE}
+q1b <- arima.sim(model = list(order = c(0, 0, 0)), n = 100, sd = 1)
+
+spec.pgram(q1b, 
+           log = "no",
+           main = "Periodogram of White Noise (n = 100)")
+# True Value
+abline(h =  1/(2*pi), col = "red", lty = 2)
+```
+
+We do not observe any pattern with the fluctuations and it having several frequencies that is
+at the true value. While some frequency components show much higher power than the true
+value, others show lower power than the true value.
+
+(c)
+
+```{r, echo=TRUE}
 q1b <- arima.sim(model = list(order = c(0, 0, 0)), n = 1000, sd = 1)
 
 spec.pgram(q1b, 
@@ -43,16 +59,6 @@ spec.pgram(q1b,
            main = "Periodogram of White Noise (n = 1000)")
 # True Value
 abline(h =  1/(2*pi), col = "red", lty = 2)
-```
-
-We do not observe any pattern with the fluctuations and it having frequencies that is at the 
-true value. While some frequency components show much higher power than the true value,
-others show lower power than the true value.
-
-(c)
-
-```{r, echo=TRUE}
-
 ```
 
 
