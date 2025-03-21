@@ -1,0 +1,102 @@
+---
+title: 'STAT 443: Lab 10'
+author: 'Aronn Grant Laurel (21232475)'
+date: "21 Mar, 2025"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(knitr)
+library(tseries)
+library(forecast)
+```
+
+### Question 1
+
+(a)
+
+```{r, echo=TRUE}
+
+```
+
+
+(b)
+
+```{r, echo=TRUE}
+
+```
+
+(c)
+
+```{r, echo=TRUE}
+
+```
+
+
+(d)
+
+```{r, echo=TRUE}
+
+```
+
+
+### Question 2
+
+(a)
+
+```{r, echo=TRUE}
+
+```
+
+
+(b)
+
+```{r, echo=TRUE}
+
+```
+
+(c)
+
+```{r, echo=TRUE}
+
+```
+
+
+(d)
+
+```{r, echo=TRUE}
+
+```
+
+
+### Question 3
+
+(a)
+
+```{r, echo=TRUE}
+
+```
+
+
+(b)
+
+```{r, echo=TRUE}
+
+```
+
+(c)
+
+```{r, echo=TRUE}
+
+```
+
+
+(d)
+
+```{r, echo=TRUE}
+
+```
