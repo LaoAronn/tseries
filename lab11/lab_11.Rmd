@@ -24,14 +24,14 @@ wn <- arima.sim(model = list(order = c(0, 0, 0)), n = 100, sd = 2)
 
 # Before Smoothing
 spec.pgram(wn, log = "no", main = " Periodogram")
+abline(h = 1, col = 2, lty = 1, lwd = 2)
 
-# After Smoothing 
+# After Smoothing (From Lec 6 P32)
 spec.pgram(wn, spans = c(5), log = "no", main = "Smoothed Periodogram (spans = c(5))")
 
 spec.pgram(wn, spans = c(15), log = "no", main = "Smoothed Periodogram (spans = c(15))")
 
-spec.pgram(wn, spans = c(7, 5), log = "no", main = "Smoothed Periodogram (spans = c(7,5))")
-
+spec.pgram(wn, spans = c(7, 5), log = "no", main = "Doubly Smoothed Periodogram (spans = c(7,5))")
 
 ```
 For the first periodogram, we observe a more 'noisy' graph.
@@ -46,14 +46,47 @@ density, but we must consider for over smoothing.
 
 (b)
 
-```{r, echo=TRUE}
-# this is where your R code goes
+```{r, echo=TRUE, fig.height = 7}
+set.seed(2)
+
+wn_1000 <- arima.sim(model = list(order = c(0, 0, 0)), n = 1000, sd = 2)
+
+# Before Smoothing / Raw Periodogram
+spec.pgram(wn_1000, log = "no", main = "Raw Periodogram (n = 1000)")
+
+# After Smoothing Periodogram
+spec.pgram(wn_1000, spans = c(5), log = "no", main = "Smoothed Periodogram (spans = c(5))")
+
+spec.pgram(wn_1000, spans = c(15), log = "no", main = "Smoothed Periodogram (spans = c(15))")
+
+spec.pgram(wn_1000, spans = c(7,5), log = "no", main = "Smoothed Periodogram (spans = c(7,5))")
+
+
 ```
+For our first periodogram before smoothing, we observe a 
+'noisy' fluctuating graph because of noise. And as we 
+increase our span size, we see our periodogram smoothing 
+out more with less variability for span c(15). We also see 
+a doubly smoothing which gives a relatively 'smoother' look
+in the graph. Overall, we observe a smoothed periodogram 
+with better approximation for our spectral density 
+function by removing any extreme fluctuations.
+
 
 
 (c)
+### Setting logs = "yes" from question (b)
+```{r, echo=TRUE, fig.height = 7}
+wn_1000 <- arima.sim(model = list(order = c(0, 0, 0)), n = 1000, sd = 2)
 
-```{r, echo=TRUE}
-# this is where your R code goes
+# Before Smoothing / Raw Periodogram
+spec.pgram(wn_1000, log = "no", main = "Raw Periodogram (n = 1000)")
+
+# After Smoothing Periodogram
+spec.pgram(wn_1000, spans = c(5), log = "yes", main = "Smoothed Periodogram (spans = c(5))")
+
+spec.pgram(wn_1000, spans = c(15), log = "yes", main = "Smoothed Periodogram (spans = c(15))")
+
+spec.pgram(wn_1000, spans = c(7,5), log = "yes", main = "Smoothed Periodogram (spans = c(7,5))")
 ```
 
