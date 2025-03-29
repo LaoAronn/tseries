@@ -1,0 +1,59 @@
+---
+title: 'STAT 443: Lab 11'
+author: 'Aronn Grant Laurel (21232475)'
+date: "28 March, 2025"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#if you do not have the package, type install.packages("name_of_the_package")
+library(knitr)
+library(tseries)
+```
+
+### Question 1
+
+(a) 
+
+```{r, echo=TRUE}
+set.seed(1) 
+wn <- arima.sim(model = list(order = c(0, 0, 0)), n = 100, sd = 2) 
+
+# Before Smoothing
+spec.pgram(wn, log = "no", main = " Periodogram")
+
+# After Smoothing 
+spec.pgram(wn, spans = c(5), log = "no", main = "Smoothed Periodogram (spans = c(5))")
+
+spec.pgram(wn, spans = c(15), log = "no", main = "Smoothed Periodogram (spans = c(15))")
+
+spec.pgram(wn, spans = c(7, 5), log = "no", main = "Smoothed Periodogram (spans = c(7,5))")
+
+
+```
+For the first periodogram, we observe a more 'noisy' graph.
+As we increase the length (m) of our smoothing filter from 
+5 to 15, we observe an increase in smoothing where the 
+noise reduces.
+By applying the two step smoothing, we observe additional
+smoothing effects on several peaks. Although Larger spans 
+could provide a more percise estimate of the spectral 
+density, but we must consider for over smoothing.
+
+
+(b)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
+
+(c)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
