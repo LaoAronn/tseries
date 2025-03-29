@@ -19,7 +19,8 @@ library(tseries)
 (a) 
 
 ```{r, echo=TRUE}
-set.seed(1) 
+set.seed(123)
+
 wn <- arima.sim(model = list(order = c(0, 0, 0)), n = 100, sd = 2) 
 
 # Before Smoothing
@@ -47,7 +48,7 @@ density, but we must consider for over smoothing.
 (b)
 
 ```{r, echo=TRUE, fig.height = 7}
-set.seed(2)
+set.seed(123)
 
 wn_1000 <- arima.sim(model = list(order = c(0, 0, 0)), n = 1000, sd = 2)
 
@@ -77,16 +78,138 @@ function by removing any extreme fluctuations.
 (c)
 ### Setting logs = "yes" from question (b)
 ```{r, echo=TRUE, fig.height = 7}
+set.seed(123)
+
 wn_1000 <- arima.sim(model = list(order = c(0, 0, 0)), n = 1000, sd = 2)
 
 # Before Smoothing / Raw Periodogram
 spec.pgram(wn_1000, log = "no", main = "Raw Periodogram (n = 1000)")
 
 # After Smoothing Periodogram
-spec.pgram(wn_1000, spans = c(5), log = "yes", main = "Smoothed Periodogram (spans = c(5))")
+spec.pgram(wn_1000, spans = c(5), log = "yes", main = "Logged Smoothed Periodogram (spans = c(5))")
 
-spec.pgram(wn_1000, spans = c(15), log = "yes", main = "Smoothed Periodogram (spans = c(15))")
+spec.pgram(wn_1000, spans = c(15), log = "yes", main = "Logged Smoothed Periodogram (spans = c(15))")
 
-spec.pgram(wn_1000, spans = c(7,5), log = "yes", main = "Smoothed Periodogram (spans = c(7,5))")
+spec.pgram(wn_1000, spans = c(7,5), log = "yes", main = "Logged Smoothed Periodogram (spans = c(7,5))")
+```
+While our periodogram without log and smoothing will 
+maintain the same, our logged and smoothed periodogram 
+shows more compressed higher values with out spectrum range
+decreasing. As we increase the smoothing, we observe less 
+fluctuations and smoother curves. 
+Our doubly logged and smoothed periodogram shows a 
+relatively smoother and similar spectrum range.
+
+I would believe span c(7, 5) be the 'best' choice in criteria
+of consistent horizontal levels and relatively fewer dips and 
+rises, meaning that it has a fair variance while also reducing 
+noise well. 
+
+(d)
+From my findings in c), Taking the log helps reduce error by 
+'compressing' the higher values. Hence, enabling the log 
+transformation reduced the variance in the spectrum.
+
+
+### Question 2
+(a)
+```{r, echo=TRUE, fig.height = 7}
+set.seed(123)
+
+ma_model <- arima.sim(n = 100, model = list(ma = -0.9), sd = 2)
+
+# Raw periodogram
+spec.pgram(ma_model, log = "no",main = "Periodogram of 
+           AR(1) Process")
+
+# Smoothed Periodogram
+spec.pgram(ma_model, log = "no", spans = c(5), main =
+             "Smoothed Periodogram (span = 5)")
+
+spec.pgram(ma_model, log = "no", spans = c(15), main =
+             "Smoothed Periodogram (span = 15)")
+
+spec.pgram(ma_model, log = "no", spans = c(7,5), main =
+             "Smoothed Periodogram (span = 7,5)")
+
+
+```
+As we increase the span 5, 7, and 15, we observe a lot smoother with 
+less fluctuations (rise & dips) with 15 having the least rise and 
+dips. Overall, we can observe a notice-able increase trend.
+(b)
+```{r, echo=TRUE, fig.height = 7}
+set.seed(123)
+
+true_spectrum <- function(omega) {
+  (7.24 / pi) * ((1 - 1.8 * cos(omega)) / 1.81)
+}
+
+omega_vals <- seq(0, pi, length.out = 500)
+theoretical_vals <- true_spectrum(2 * pi * omega_vals)
+
+spec.pgram(ma_model, log = "no", main = "Raw Periodogram (n = 100)")
+lines(omega_vals, theoretical_vals, col = "red", lwd = 2)
+
+spec.pgram(ma_model, spans = c(5), log = "no", main = "Spans = c(5)")
+lines(omega_vals, theoretical_vals, col = "red", lwd = 2)
+
+spec.pgram(ma_model, spans = c(15), log = "no", main = "Spans = c(15)")
+lines(omega_vals, theoretical_vals, col = "red", lwd = 2)
+
+spec.pgram(ma_model, spans = c(7, 5), log = "no", main = "Spans = c(7,5)")
+lines(omega_vals, theoretical_vals, col = "red", lwd = 2)
+
 ```
 
+(c)
+```{r, echo=TRUE, fig.height = 7}
+set.seed(123)
+
+ma_model2 <- arima.sim(n = 1000, model = list(ma = -0.9), sd = 2)
+
+# Raw periodogram
+spec.pgram(ma_model2, log = "no",main = "Periodogram of 
+           AR(1) Process")
+
+# Smoothed Periodogram
+spec.pgram(ma_model2, log = "no", spans = c(5), main =
+             "Smoothed Periodogram (span = 5)")
+
+spec.pgram(ma_model2, log = "no", spans = c(15), main =
+             "Smoothed Periodogram (span = 15)")
+
+spec.pgram(ma_model2, log = "no", spans = c(7,5), main =
+             "Smoothed Periodogram (span = 7,5)")
+
+```
+As we increase our smoothing span from 5 to 15, we start to observe 
+a reduction in noise where it becomes much more smoother with less
+fluctuations (rise & dips). We can see the transition from span 5 to 
+15 where more high-frequency noises are reduced. 
+
+(d)
+```{r, echo=TRUE, fig.height = 7}
+set.seed(123)
+
+omega_vals <- seq(0, pi, length.out = 500)
+theoretical_vals <- true_spectrum(2 * pi * omega_vals)
+
+spec.pgram(ma_model2, log = "no", main = "Raw Periodogram (n = 100)")
+lines(omega_vals, theoretical_vals, col = "red", lwd = 2)
+
+spec.pgram(ma_model2, spans = c(5), log = "no", main = "Spans = c(5)")
+lines(omega_vals, theoretical_vals, col = "red", lwd = 2)
+
+spec.pgram(ma_model2, spans = c(15), log = "no", main = "Spans = c(15)")
+lines(omega_vals, theoretical_vals, col = "red", lwd = 2)
+
+spec.pgram(ma_model2, spans = c(7, 5), log = "no", main = "Spans = c(7,5)")
+lines(omega_vals, theoretical_vals, col = "red", lwd = 2)
+
+```
+Since we used n = 1000, we expect the periodogram to be closer to the 
+true spectral density than when n = 100. Observing our graphs, while 
+increasing the span of the periodogram reduces variability for both 
+n's, increasing n improves our periodogram's ability to capture the 
+spectral density better.
