@@ -1,0 +1,326 @@
+---
+title: 'STAT 443: Lab 10'
+author: 'Aronn Grant Laurel (21232475)'
+date: "21 Mar, 2025"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(knitr)
+library(tseries)
+library(forecast)
+```
+
+### Question 1
+
+(a)
+
+```{r, echo=TRUE}
+# From Chapter 6 Lecture slides
+freq <- seq(0, 0.5, length.out = 100)
+spectral_density <- rep(1, length(freq))
+
+plot(freq,
+     spectral_density, 
+     xlab = "Frequency (cycles per unit time)", 
+     ylab = "Spectral Density", 
+     main = "Spectral Density Function for White Noise",
+     type = "l")
+```
+
+
+(b)
+
+```{r, echo=TRUE}
+q1b <- arima.sim(model = list(order = c(0, 0, 0)), n = 100, sd = 1)
+
+spec.pgram(q1b, 
+           log = "no",
+           main = "Periodogram of White Noise (n = 100)")
+
+# True Value
+abline(h =  1, col = "red", lty = 2)
+```
+
+We do not observe any pattern with the fluctuations and it having several frequencies that is
+at the true value = 1. While some frequency components show much higher power than the true
+value, others show lower power than the true value.
+
+(c)
+
+```{r, echo=TRUE}
+q1b <- arima.sim(model = list(order = c(0, 0, 0)), n = 1000, sd = 1)
+
+spec.pgram(q1b, 
+           log = "no",
+           main = "Periodogram of White Noise (n = 1000)")
+# True Value
+abline(h =  1, col = "red", lty = 2)
+```
+With an increase of sample size n = 1000, we observe more fluctuations spikes and 
+more points around the true value.
+
+(d)
+
+```{r, echo=TRUE}
+par(mfrow = c(2, 2)) 
+for (i in 1:4) {
+  
+  set.seed(i)
+  
+  wn_series <- arima.sim(model = list(order = c(0,0,0)), n = 100)
+  
+  spec.pgram(wn_series,
+             log = "no",
+             main = paste("White Noise Periodogram (n=100), Run", i))
+  
+  abline(h = 1, col = "red", lty = 2)
+}
+
+
+par(mfrow = c(2, 2))
+for (i in 1:4) {
+  set.seed(i)
+  
+  wn_series_long <- arima.sim(model = list(order = c(0,0,0)), n = 1000)
+  
+  spec.pgram(wn_series_long,
+             log = "no",
+             main = paste("White Noise Periodogram (n=1000), Run", i))
+  
+  abline(h = 1, col = "red", lty = 2)
+}
+
+
+```
+Similar to our findings in question b) and c), we can observe that higher sample
+size (n = 1000) has a relatively higher / more frequencies at which the
+spectral density is estimated. 
+
+### Question 2
+
+(a)
+```{r, echo=TRUE}
+# Omega
+omega <- seq(0, pi, length.out = 1000)
+freq <- omega / (2 * pi)
+
+# Calculate spectral density [ MA(1) process ]
+theta <- 0.9
+spec_density <- (1 / (2 * pi)) * (1 + theta^2 + 2 * theta * cos(omega))
+
+plot(freq, spec_density, type = "l", 
+     xlab = "Frequency (cycles per unit time)", 
+     ylab = "Spectral Density", 
+     main = "Spectral Density Function for MA(1) Process: Xt = Zt + 0.9Zt-1")
+
+abline(h = 1/(2*pi), col = "red", lty = 2)
+
+```
+The spectral density for this MA(1) process is highest at lower frequencies and gradually
+decreases as the frequency increases.
+
+(b)
+
+```{r, echo=TRUE}
+
+ma1_series_short <- arima.sim(model = list(order = c(0,0,1), ma = 0.9), n = 100)
+
+periodogram_short <- spec.pgram(ma1_series_short,
+                                log = "no", 
+                                main = "Periodogram of MA(1) Process (n = 100)")
+
+omega <- 2 * pi * periodogram_short$freq 
+theta <- 0.9
+true_spec <- (1 / (2 * pi)) * (1 + theta^2 + 2 * theta * cos(omega))
+
+lines(periodogram_short$freq, true_spec, col = "red", lwd = 2)
+```
+From the periodogram at sample size = 100, we can see high fluctuations which decreases and 
+approaches close to the true spectral density curve. The periodogram displays a high 
+variance. Hence it is not reliable as an estimator of the spectral density.
+
+(c)
+
+```{r, echo=TRUE}
+ma1_series_long <- arima.sim(model = list(order = c(0,0,1), ma = 0.9), n = 1000)
+
+periodogram_long <- spec.pgram(ma1_series_long,
+                               log = "no", 
+                               main = "Periodogram of MA(1) Process (n = 1000)")
+
+omega <- 2 * pi * periodogram_long$freq 
+theta <- 0.9
+true_spec <- (1 / (2 * pi)) * (1 + theta^2 + 2*theta*cos(omega))
+
+lines(periodogram_long$freq, true_spec, col = "red", lwd = 2)
+
+```
+With sample size = 1000, we can also observe that our frequency approaches to
+the true spectral density curve as our frequency increases to 0.5.
+Increasing the sample size to 1000, it improved the estimate by gradually reducing the 
+variance.
+
+(d)
+```{r, echo=TRUE}
+par(mfrow = c(2, 2))
+
+get_true_spec <- function(freq) {
+  omega <- 2 * pi * freq
+  theta <- 0.9
+  sigma_squared <- 1
+  return((sigma_squared/(2*pi)) * (1 + theta^2 + 2*theta*cos(omega)))
+}
+
+for (i in 1:4) {
+  set.seed(i)
+  
+  ma1_series <- arima.sim(model = list(order = c(0,0,1), ma = 0.9), n = 100)
+  
+  pgram <- spec.pgram(ma1_series, log = "no", 
+                     main = paste("MA(1) Periodogram (n=100), Run", i), 
+                     plot = TRUE)
+  
+  true_spec <- get_true_spec(pgram$freq)
+  
+  lines(pgram$freq, true_spec, col = "red", lwd = 2)
+}
+
+
+```
+
+```{r, echo=TRUE}
+par(mfrow = c(2, 2))
+
+for (i in 1:4) {
+  set.seed(i) 
+  
+  ma1_series_long <- arima.sim(model = list(order = c(0,0,1), ma = 0.9), n = 1000)
+  
+  pgram <- spec.pgram(ma1_series_long, log = "no", 
+                     main = paste("MA(1) Periodogram (n=1000), Run", i), 
+                     plot = TRUE)
+  
+  true_spec <- get_true_spec(pgram$freq)
+  
+  lines(pgram$freq, true_spec, col = "red", lwd = 2)
+}
+
+```
+
+Across all simulations, we get similar findings to question 2 b) and c) where it is higher at
+low frequencies and gradually decreasing, but the 'peaks' at specific frequencies vary 
+considerably between simulations. Overall, I believe it is not a consistent estimator,
+the periodograms remain quite noisy. 
+ 
+
+### Question 3
+
+(a)
+
+```{r, echo=TRUE}
+freq <- omega/(2*pi)
+spec_density <- 1/(pi * (1 + 1.6*cos(omega) + 0.8^2))
+
+plot(freq,
+     spec_density,
+     type = "l", 
+     xlab = "Frequency (cycles per unit time)", 
+     ylab = "Spectral Density", 
+     main = "Spectral Density Function for AR(1) Process: Xt = -0.8Xt-1 + Zt")
+
+abline(h = 1/(2*pi), col = "red", lty = 2)
+
+```
+
+Opposite to the MA(1) process we saw earlier, this AR(1) process ressembles an exponential
+graph with it's spectral density lowest at low frequencies and gradually increases at high 
+frequencies. 
+
+(b)
+
+```{r, echo=TRUE}
+
+ar1_series <- arima.sim(model = list(order = c(1,0,0), ar = -0.8), n = 100)
+
+ar1_periodogram <- spec.pgram(ar1_series,
+                          log = "no", 
+                         main = "Periodogram of AR(1) Process (n=100)")
+
+omega <- 2 * pi * ar1_periodogram$freq
+true_spec <- 1/(pi * (1 + 1.6 * cos(omega) + 0.8^2))
+lines(ar1_periodogram$freq, true_spec, col = "red", lwd = 2)
+
+```
+For sample size n = 100, the periodogram displays a high variance.
+Hence it is not reliable as an estimator of the spectral density 
+
+(c)
+```{r, echo=TRUE}
+
+ar1_series_long <- arima.sim(model = list(order = c(1,0,0), ar = -0.8), n = 1000)
+
+ar1_periodogram_long <- spec.pgram(ar1_series_long,
+                                   log = "no", 
+                                   main = "Periodogram of AR(1) Process (n=1000)")
+
+lines(ar1_periodogram$freq, true_spec, col = "red", lwd = 2)
+
+```
+At increased sample size, we observe more fluctuates with similar variances.
+Hence it is not reliable as an estimator of the spectral density.
+
+(d)
+
+```{r, echo=TRUE}
+par(mfrow = c(2, 2))
+
+get_true_spec <- function(freq) {
+  omega <- 2 * pi * freq
+  theta <- 0.9
+  sigma_squared <- 1
+  return ( 1 / (pi * (1 + 1.6 * cos(omega) + 0.8^2)) )
+}
+
+for (i in 1:4) {
+  set.seed(i)
+  
+  ma1_series <- arima.sim(model = list(order = c(1,0,0), ar = -0.8), n = 100)
+  
+  pgram <- spec.pgram(ma1_series, log = "no", 
+                     main = paste("AR(1) Periodogram (n=100), Run", i), 
+                     plot = TRUE)
+  
+  true_spec <- get_true_spec(pgram$freq)
+  
+  lines(pgram$freq, true_spec, col = "red", lwd = 2)
+}
+
+```
+
+```{r, echo=TRUE}
+par(mfrow = c(2, 2))
+
+for (i in 1:4) {
+  set.seed(i)
+  
+  ma1_series <- arima.sim(model = list(order = c(1,0,0), ar = -0.8), n = 1000)
+  
+  pgram <- spec.pgram(ma1_series, log = "no", 
+                     main = paste("AR(1) Periodogram (n=100), Run", i), 
+                     plot = TRUE)
+  
+  true_spec <- get_true_spec(pgram$freq)
+  
+  lines(pgram$freq, true_spec, col = "red", lwd = 2)
+}
+
+```
+
+Across all runs for both samples sizes, we can still observe noisy periodograms
+is not a consistent estimator of the spectral density because its variance does 
+not decrease with more data.
