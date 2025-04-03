@@ -119,11 +119,17 @@ On a cycle length of approximately 7 days, we get the predator prey
 cycles to be approximately 52.7
 
 (d)
-```{r, echo=TRUE}
-spec_smooth <- spectrum(rot_ts, spans = c(3, 3),
-                        log = "no",
-                        main = "Smoothed Periodogram Rotifer Population")
+```{r, echo=TRUE, fig.height = 7}
+spec_smooth <- spec.pgram(rot_ts, 
+                          spans = c(366 / 40), # As per piazza response @116
+                          log = "no",
+                          main = "Smoothed Periodogram Rotifer Population")
 ```
+We may want to change the raw periodogram since we know it is not a
+consistent estimator of the spectral density function and change it
+to an estimator that is more consistent. As per piazza response @116, 
+I chose N / 40 over 2 *sqrt(N) for my span smoothing because I believe
+it includes several peaks and dips relatively better.
 
 (e)
 
