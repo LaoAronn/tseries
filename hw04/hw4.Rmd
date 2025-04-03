@@ -17,7 +17,9 @@ library(ggplot2)
 
 ### Question 1
 (a & b)
-
+```{r, echo=TRUE}
+knitr::include_graphics("q1a.jpg")
+```
 
 (c)
 
@@ -61,6 +63,42 @@ our AR(2) process has long term dependencies.
 
 
 (b)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
+(c)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
+(d)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
+(e)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
+(f)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
+(g)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
+(h)
 
 ```{r, echo=TRUE}
 # this is where your R code goes
