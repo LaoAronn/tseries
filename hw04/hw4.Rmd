@@ -134,8 +134,14 @@ it includes several peaks and dips relatively better.
 (e)
 
 ```{r, echo=TRUE}
-# this is where your R code goes
+
+N <- length(rot_ts) # 366
+
+omega_59 <- (2 * pi * 59) / N 
+omega_59
+
 ```
+Our Fourier Frequency for p = 59 is 1.012863.
 
 (f)
 
