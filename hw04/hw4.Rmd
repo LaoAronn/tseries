@@ -25,35 +25,44 @@ knitr::include_graphics("q1a.jpg")
 
 ```{r, echo=TRUE}
 # Calculate the spectral density
-
-omega <- seq(-pi, pi, length.out = 500)
-f_vals <- spectral_density(omega)
-
 spectral_density <- function(omega) {
-  (1 / (2 * pi)) * (1 / (1.05 - 0.16 * cos(omega) - 0.4 * cos(2 * omega)))
+  term2 <- (15/18) * ((-0.4*cos(omega) - 0.16) / (1.16 + 0.8 * cos(omega)))
+  term3 <- (21/18) * ((0.5*cos(omega) - 0.25) / (1.25 - cos(omega)))
+  
+  return((1/pi) * (1 + term2 + term3))
 }
 
+# Create a sequence of frequencies from 0 to pi
+omega <- seq(0, pi, length.out = 1000)
+
+# Calculate the spectral density for each frequency
+spec_values <- sapply(omega, spectral_density)
+
 # Create a data frame for plotting
-data <- data.frame(omega = omega, f_X = f_vals)
+spec_df <- data.frame(
+  omega = omega,
+  frequency = omega/(2*pi),
+  spectral_density = spec_values
+)
+
 
 # Plot using ggplot2
-ggplot(data, aes(x = omega, y = f_X)) +
+ggplot(spec_df, aes(x = omega, y = spec_values)) +
   geom_line() +
   labs(title = "Spectral Density : AR(2) Process",
        x = "Frequency",
        y = "f(w)") +
-  theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5, size = 14))
+  theme_minimal()
 ```
 We can the spectral density being dominated by low frequencies, with 
 the spectral density is at highest at frequency = 0 as it's peak.
 As we move further away from frequency 0, we observe
-a dip / decreasing spectral density and another two smaller peaks
-at approximately frequencies -3 and 3. Overall, this suggests that
+a dip / decreasing spectral density and another smaller peaks
+at approximately frequency 3. Overall, this suggests that
 our AR(2) process has long term dependencies.
 
 
-### Question 2
+### Question 3
 
 (a) 
 
