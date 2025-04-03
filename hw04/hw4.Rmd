@@ -65,11 +65,20 @@ our AR(2) process has long term dependencies.
 ### Question 3
 
 (a) 
-
 ```{r, echo=TRUE}
-# this is where your R code goes
+predator<- read.csv("predator_prey.csv")
+
+rot_ts <- ts(predator$rotifers..animals.ml.)
+
+plot(rot_ts,
+     main = "Rotifer Population Over Time",
+     ylab = "Population Density (Animals / ML)"
+     )
 ```
 
+We observe a consistent fluctuation until at time ~350 where we
+observe a large spike / peak before dropping back to the consistent
+fluctuation.
 
 (b)
 
