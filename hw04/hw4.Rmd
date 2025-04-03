@@ -88,8 +88,8 @@ raw_spec <- spectrum(rot_ts,
                      log = "no",
                      main = "Raw Periodogram of Rotifer Time Series")
 
-frequencies <- spec_raw$freq
-spectrum_values <- spec_raw$spec
+frequencies <- raw_spec$freq
+spectrum_values <- raw_spec$spec
 
 # Get the max 
 max_index <- which.max(spectrum_values)
@@ -107,15 +107,22 @@ For our dominating frequency 0.144, we get wavelength (days) ~ 6.944
 and angular frequency ~ 0.905
 
 (c)
-
 ```{r, echo=TRUE}
-# this is where your R code goes
+
+N <- length(rot_ts)
+
+num_cycles <- N / wavelength_days
+num_cycles
+
 ```
+On a cycle length of approximately 7 days, we get the predator prey 
+cycles to be approximately 52.7
 
 (d)
-
 ```{r, echo=TRUE}
-# this is where your R code goes
+spec_smooth <- spectrum(rot_ts, spans = c(3, 3),
+                        log = "no",
+                        main = "Smoothed Periodogram Rotifer Population")
 ```
 
 (e)
