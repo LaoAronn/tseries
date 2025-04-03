@@ -1,0 +1,67 @@
+---
+title: 'STAT 443: Homework 4'
+author: 'Aronn Grant Laurel (21232475)'
+date: "3 April, 2025"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#if you do not have the package, type install.packages("name_of_the_package")
+library(knitr)
+library(tseries)
+library(ggplot2)
+```
+
+### Question 1
+(a & b)
+
+
+(c)
+
+```{r, echo=TRUE}
+# Calculate the spectral density
+
+omega <- seq(-pi, pi, length.out = 500)
+f_vals <- spectral_density(omega)
+
+spectral_density <- function(omega) {
+  (1 / (2 * pi)) * (1 / (1.05 - 0.16 * cos(omega) - 0.4 * cos(2 * omega)))
+}
+
+# Create a data frame for plotting
+data <- data.frame(omega = omega, f_X = f_vals)
+
+# Plot using ggplot2
+ggplot(data, aes(x = omega, y = f_X)) +
+  geom_line() +
+  labs(title = "Spectral Density : AR(2) Process",
+       x = "Frequency",
+       y = "f(w)") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14))
+```
+We can the spectral density being dominated by low frequencies, with 
+the spectral density is at highest at frequency = 0 as it's peak.
+As we move further away from frequency 0, we observe
+a dip / decreasing spectral density and another two smaller peaks
+at approximately frequencies -3 and 3. Overall, this suggests that
+our AR(2) process has long term dependencies.
+
+
+### Question 2
+
+(a) 
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
+
+
+(b)
+
+```{r, echo=TRUE}
+# this is where your R code goes
+```
