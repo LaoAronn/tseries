@@ -18,7 +18,7 @@ library(ggplot2)
 ### Question 1
 (a & b)
 ```{r, echo=TRUE}
-knitr::include_graphics("q1a.jpg")
+knitr::include_graphics("q1.jpg")
 ```
 
 (c)
@@ -29,7 +29,7 @@ spectral_density <- function(omega) {
   term2 <- (15/18) * ((-0.4*cos(omega) - 0.16) / (1.16 + 0.8 * cos(omega)))
   term3 <- (21/18) * ((0.5*cos(omega) - 0.25) / (1.25 - cos(omega)))
   
-  return((1/pi) * (1 + term2 + term3))
+  return((1/(0.95*pi)) * (1 + term2 + term3))
 }
 
 # Create a sequence of frequencies from 0 to pi
@@ -62,8 +62,12 @@ at approximately frequency 3. Overall, this suggests that
 our AR(2) process has long term dependencies.
 
 
-### Question 3
+### Question 2
+```{r, echo=TRUE}
+knitr::include_graphics("q2.jpg")
+```
 
+### Question 3
 (a) 
 ```{r, echo=TRUE}
 predator<- read.csv("predator_prey.csv")
@@ -144,19 +148,101 @@ omega_59
 Our Fourier Frequency for p = 59 is 1.012863.
 
 (f)
-
 ```{r, echo=TRUE}
-# this is where your R code goes
+N <- length(rot_ts)  # 366
+
+# Create an empty data frame to store significant frequencies
+significant_freqs <- data.frame(
+  p = integer(),
+  freq = numeric(),
+  angular_freq = numeric(),
+  wavelength = numeric(),
+  F_stat = numeric(),
+  p_value = numeric()
+)
+
+# Loop through potential frequencies (Fourier components)
+for (p in 1:(N/2)) {
+  t <- 1:N  # Time vector
+  omega_p <- 2 * pi * p / N  # angular frequency
+
+  # Fit the linear model 
+  model <- lm(rot_ts ~ cos(omega_p * t) + sin(omega_p * t))
+
+  # Extract F-statistic and p-value from model summary
+  model_summary <- summary(model)
+  f_stat <- model_summary$fstatistic[1]
+  p_value <- pf(f_stat,
+                model_summary$fstatistic[2],
+                model_summary$fstatistic[3],
+                lower.tail = FALSE)
+
+  # Store results if significant at 99% confidence level (p < 0.01)
+  if (p_value < 0.01) {
+    significant_freqs <- rbind(significant_freqs, data.frame(
+      p = p,
+      freq = p / N,
+      angular_freq = omega_p,
+      wavelength = N / p,
+      F_stat = f_stat,
+      p_value = p_value
+    ))
+  }
+}
+
+# Sort significant frequencies by F-statistic (DESC)
+significant_freqs <- significant_freqs[order(-significant_freqs$F_stat), ]
+
+print(significant_freqs)
 ```
+
 
 (g)
-
 ```{r, echo=TRUE}
-# this is where your R code goes
+
+top_freqs <- head(significant_freqs, 3) # top 3 significant frequencies
+N <- length(rot_ts)  # 366
+t <- 1:N  # Time index
+
+# Start building the formula as a string
+formula_terms <- c()
+
+# Loop through each top frequency and construct sin-cos terms
+for (i in 1:nrow(top_freqs)) {
+  p <- top_freqs$p[i]
+  omega_p <- 2 * pi * p / N  # angular frequency
+
+  formula_terms <- c(
+    formula_terms, 
+    paste0("cos(", omega_p, " * t)"), 
+    paste0("sin(", omega_p, " * t)")
+  )
+}
+
+
+formula_str <- paste("rot_ts ~", paste(formula_terms, collapse = " + "))
+data_frame <- data.frame(t = t, rot_ts = rot_ts)
+
+# Fit linear model 
+model_fit <- lm(as.formula(formula_str), data = data_frame)
+
+summary(model_fit)
+
 ```
 
-(h)
 
-```{r, echo=TRUE}
-# this is where your R code goes
+(h)
+```{r, echo=TRUE, fig.height = 6}
+# Prediction
+pred_vals <- predict(model_fit)
+
+plot(rot_ts,
+     ylab="Population Density (animals / ML)",
+     main="Rotifer Population: Original vs Fitted Model")
+
+
+lines(pred_vals, col="red", lwd=2)
+legend("topright", legend=c("Original Data", "Fitted Model"),
+col=c("black", "red"), lty=1)
+
 ```
